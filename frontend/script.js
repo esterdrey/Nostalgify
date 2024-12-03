@@ -1,21 +1,51 @@
-const form = document.querySelector('#image-form');
-form.addEventListener('submit', async (event) => {
-    event.preventDefault();
+const video = document.getElementById('camera');
+const captureButton = document.getElementById('capture');
+const uploadInput = document.getElementById('upload');
+const submitButton = document.getElementById('submit');
 
-    const fileInput = document.querySelector('#file-input');
-    const country = document.querySelector('#country').value;
-    const formData = new FormData();
-    formData.append('image', fileInput.files[0]);
-    formData.append('country', country);
+let imageData = null;
 
-    try {
-        const response = await fetch('http://127.0.0.1:5000/analyze', {
-            method: 'POST',
-            body: formData,
-        });
-        const data = await response.json();
-        document.querySelector('#result').textContent = `Age: ${data.age}, Country: ${data.country}`;
-    } catch (error) {
-        document.querySelector('#result').textContent = 'Error analyzing image.';
+// גישה למצלמה
+navigator.mediaDevices.getUserMedia({ video: true })
+    .then(stream => {
+        video.srcObject = stream;
+    });
+
+// צילום תמונה
+captureButton.addEventListener('click', () => {
+    const canvas = document.createElement('canvas');
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    canvas.getContext('2d').drawImage(video, 0, 0);
+    imageData = canvas.toDataURL('image/png');
+});
+
+// העלאת תמונה קיימת
+uploadInput.addEventListener('change', (event) => {
+    const file = event.target.files[0];
+    const reader = new FileReader();
+    reader.onload = () => {
+        imageData = reader.result;
+    };
+    reader.readAsDataURL(file);
+});
+
+// שליחת נתונים לשרת
+submitButton.addEventListener('click', () => {
+    const country = document.getElementById('country').value;
+    if (!imageData) {
+        alert('Please capture or upload an image.');
+        return;
     }
+    fetch('http://127.0.0.1:5000/process', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ image: imageData, country })
+    })
+    .then(response => response.json())
+    .then(data => {
+        alert(`Playlist: ${data.playlist}`);
+    });
 });

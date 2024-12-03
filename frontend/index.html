@@ -1,23 +1,19 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Nostalgify</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css">
+    <title>Nostalgify</title>
 </head>
 <body>
     <h1>Nostalgify</h1>
-    <form id="image-form">
-        <label for="file-input">Upload Image:</label>
-        <input type="file" id="file-input" accept="image/*">
-        <label for="country">Country of Childhood:</label>
-        <select id="country">
-            <option value="USA">USA</option>
-            <option value="Israel">Israel</option>
-            <option value="France">France</option>
-        </select>
-        <button type="submit">Analyze</button>
-    </form>
-    <p id="result"></p>
+    <video id="camera" autoplay></video>
+    <button id="capture">Capture</button>
+    <p>OR</p>
+    <input type="file" id="upload" accept="image/*">
+    <input type="text" id="country" placeholder="Enter your childhood country">
+    <button id="submit">Submit</button>
     <script src="script.js"></script>
 </body>
 </html>
