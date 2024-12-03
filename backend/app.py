@@ -8,8 +8,8 @@ def analyze():
     if not file:
         return jsonify({"error": "No image provided"}), 400
 
-    # Mock גיל
-    return jsonify({"age": 25, "message": "Analysis successful"})
+    # Mock s גיל
+    return jsonify({"age": 25, "message": "Analysis uccessful"})
 
 if __name__ == '__main__':
     app.run(debug=True)
