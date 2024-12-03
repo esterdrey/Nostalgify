@@ -1,16 +1,20 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Nostalgify</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h1>Welcome to Nostalgify</h1>
+    <h1>Nostalgify</h1>
     <form id="image-form">
-        <label for="file-input">Upload an Image:</label>
+        <label for="file-input">Upload Image:</label>
         <input type="file" id="file-input" accept="image/*">
+        <label for="country">Country of Childhood:</label>
+        <select id="country">
+            <option value="USA">USA</option>
+            <option value="Israel">Israel</option>
+            <option value="France">France</option>
+        </select>
         <button type="submit">Analyze</button>
     </form>
     <p id="result"></p>
