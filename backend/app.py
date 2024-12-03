@@ -4,8 +4,8 @@ from flask import Flask, request, jsonify
 app = Flask(__name__)
 
 # Azure Face API credentials
-API_KEY = "YOUR_API_KEY"  # הכניסי את ה-Primary Key
-ENDPOINT = "YOUR_ENDPOINT_URL"  # הכניסי את ה-Endpoint URL
+API_KEY = "49GoDkon9avRAnLN4dbYQ2UeCYFNrzYSM6WAiRi9kXmOrEIVHG2LJQQJ99ALAC5RqLJXJ3w3AAAKACOGYyNC"
+ENDPOINT = "https://nostalgify.cognitiveservices.azure.com/" 
 
 @app.route('/analyze', methods=['POST'])
 def analyze():
