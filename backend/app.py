@@ -1,4 +1,5 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template, send_from_directory
+import os
 import base64
 from io import BytesIO
 from PIL import Image
@@ -6,7 +7,7 @@ import requests
 from spotipy import Spotify
 from spotipy.oauth2 import SpotifyClientCredentials
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder='../frontend', template_folder='../frontend')
 
 # Spotify Authentication
 sp = Spotify(auth_manager=SpotifyClientCredentials(
@@ -20,7 +21,11 @@ AZURE_KEY = "YOUR_AZURE_KEY"
 
 @app.route('/')
 def home():
-    return "Welcome to Nostalgify!"
+    return render_template('index.html')  # מציג את index.html מהתיקייה frontend
+
+@app.route('/static/<path:path>')
+def static_files(path):
+    return send_from_directory(os.path.join(app.root_path, '../frontend'), path)
 
 @app.route('/process', methods=['POST'])
 def process():
