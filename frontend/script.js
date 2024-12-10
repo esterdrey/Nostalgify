@@ -1,9 +1,10 @@
-const cameraPreview = document.getElementById('camera'); // התצוגה של המצלמה
-const captureButton = document.getElementById('capture'); // כפתור צילום
-const uploadInput = document.getElementById('upload'); // כפתור העלאת תמונה
-const submitButton = document.getElementById('submit'); // כפתור שליחה
+const cameraPreview = document.getElementById('camera');
+const captureButton = document.getElementById('capture');
+const uploadInput = document.getElementById('upload');
+const submitButton = document.getElementById('submit');
+const resultDiv = document.getElementById('result');
 
-let imageData = null; // כאן נשמור את התמונה המצולמת או המועלת
+let imageData = null;
 
 // גישה למצלמה
 navigator.mediaDevices.getUserMedia({ video: true })
@@ -12,6 +13,7 @@ navigator.mediaDevices.getUserMedia({ video: true })
     })
     .catch(error => {
         console.error("Error accessing camera: ", error);
+        alert("Unable to access the camera. Please check your permissions.");
     });
 
 // צילום תמונה
@@ -42,6 +44,10 @@ submitButton.addEventListener('click', () => {
         alert('Please capture or upload an image.');
         return;
     }
+    if (!country) {
+        alert('Please enter your childhood country.');
+        return;
+    }
     fetch('/process', {
         method: 'POST',
         headers: {
@@ -54,7 +60,7 @@ submitButton.addEventListener('click', () => {
         if (data.error) {
             alert(`Error: ${data.error}`);
         } else {
-            alert(`Playlist: ${data.playlist}`);
+            resultDiv.innerHTML = `<p>Your playlist is ready: <a href="${data.playlist}" target="_blank">Open Playlist</a></p>`;
         }
     })
     .catch(error => {
