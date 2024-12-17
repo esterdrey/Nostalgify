@@ -1,31 +1,9 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const cameraPreview = document.getElementById('camera');
-    const captureButton = document.getElementById('capture');
     const uploadInput = document.getElementById('upload');
     const submitButton = document.getElementById('submit');
     const resultDiv = document.getElementById('result');
 
     let imageData = null;
-
-    // גישה למצלמה
-    navigator.mediaDevices.getUserMedia({ video: true })
-        .then(stream => {
-            cameraPreview.srcObject = stream;
-        })
-        .catch(error => {
-            console.error("Error accessing camera: ", error);
-            alert("Unable to access the camera. Please check your permissions.");
-        });
-
-    // צילום תמונה
-    captureButton.addEventListener('click', () => {
-        const canvas = document.createElement('canvas');
-        canvas.width = cameraPreview.videoWidth;
-        canvas.height = cameraPreview.videoHeight;
-        canvas.getContext('2d').drawImage(cameraPreview, 0, 0);
-        imageData = canvas.toDataURL('image/png');
-        alert('Image captured successfully!');
-    });
 
     // העלאת תמונה קיימת
     uploadInput.addEventListener('change', (event) => {
