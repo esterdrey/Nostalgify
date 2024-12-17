@@ -6,7 +6,7 @@ from io import BytesIO
 from PIL import Image
 
 # הגדרות ה-Azure Face API שלך
-AZURE_ENDPOINT = "https://https://nostalgifyapp.cognitiveservices.azure.com/.cognitiveservices.azure.com/"
+AZURE_ENDPOINT = "https://nostalgifyapp.cognitiveservices.azure.com/"
 AZURE_API_KEY = "2iWX7sQ6mzHvGG18xGJQ2rUgbjInyQiQJ0o9pAB7BaO01c7tOxrAJQQJ99ALACYeBjFXJ3w3AAAKACOGc7zL"
 FACE_API_URL = f"{AZURE_ENDPOINT}face/v1.0/detect"
 
@@ -17,12 +17,6 @@ app = Flask(__name__, static_folder='../frontend', template_folder='../frontend'
 def home():
     """הצגת עמוד הבית - index.html"""
     return render_template('index.html')
-
-@app.route('/static/<path:filename>')
-def static_files(filename):
-    """שירות לקבצים סטטיים"""
-    static_dir = os.path.join(app.root_path, '../frontend')
-    return send_from_directory(static_dir, filename)
 
 @app.route('/process', methods=['POST'])
 def process_image():
@@ -39,10 +33,6 @@ def process_image():
         # המרת התמונה לבינארי
         header, encoded = image_data.split(",", 1)
         image_binary = base64.b64decode(encoded)
-
-        # שמירת התמונה לבדיקה (אופציונלי)
-        image = Image.open(BytesIO(image_binary))
-        image.save("uploaded_image.png")
 
         # שליחת התמונה ל-Azure Face API
         headers = {
