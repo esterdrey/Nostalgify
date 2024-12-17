@@ -36,12 +36,12 @@
             height: auto;
         }
 
-
         #preview {
             margin-top: 20px;
             width: 100%;
             border: 2px solid #ddd;
             border-radius: 10px;
+            display: none;
         }
 
         #capture, #submit {
@@ -57,14 +57,6 @@
 
         #capture:hover, #submit:hover {
             background-color: #4951c3;
-        }
-
-        /* עיצוב התמונה שצולמה */
-        #preview {
-            margin-top: 20px;
-            width: 100%;
-            border: 2px solid #ddd;
-            border-radius: 10px;
         }
 
         input[type="file"], input[type="text"] {
@@ -86,6 +78,9 @@
         <!-- העלאת תמונה קיימת -->
         <input type="file" id="upload" accept="image/*">
         <input type="text" id="country" placeholder="Enter your childhood country">
+
+        <!-- אלמנט התצוגה המקדימה -->
+        <img id="preview" alt="Image Preview">
 
         <!-- כפתור שליחה -->
         <button id="submit">Get Your Playlist</button>

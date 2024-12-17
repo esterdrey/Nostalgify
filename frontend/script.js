@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const uploadInput = document.getElementById('upload');
+    const uploadInput = document.getElementById('upload'); // שגיאה תוקנה
     const submitButton = document.getElementById('submit');
     const resultDiv = document.getElementById('result');
     const preview = document.getElementById('preview');
@@ -8,36 +8,22 @@ document.addEventListener('DOMContentLoaded', () => {
     // העלאת תמונה קיימת
     uploadInput.addEventListener('change', (event) => {
         const file = event.target.files[0];
-        const reader = new FileReader();
-        reader.onload = () => {
-            imageData = reader.result;
-            alert('Image uploaded successfully!');
-        };
-        reader.readAsDataURL(file);
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                imageData = e.target.result; // שמירת נתוני התמונה
+                preview.src = e.target.result; // הצגת התמונה
+                preview.style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+        }
     });
-
-    // הצגת התמונה כ-Preview
-    preview.src = canvas.toDataURL('image/png');
-    preview.style.display = 'block';
-});
-
-// תצוגה מקדימה של תמונה שהועלתה
-uploadInput.addEventListener('change', (event) => {
-    const file = event.target.files[0];
-    if (file) {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            preview.src = e.target.result;
-            preview.style.display = 'block';
-        };
-        reader.readAsDataURL(file);
-    }
 
     // שליחת נתונים לשרת
     submitButton.addEventListener('click', () => {
         const country = document.getElementById('country').value;
         if (!imageData) {
-            alert('Please capture or upload an image.');
+            alert('Please upload an image.');
             return;
         }
         if (!country) {
