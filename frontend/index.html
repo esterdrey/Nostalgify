@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Nostalgify</title>
-    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js"></script>
     <style>
         /* עיצוב הבסיס */
         body {
@@ -109,48 +110,5 @@
         <!-- תוצאה -->
         <div id="result"></div>
     </div>
-
-    <script>
-        // הפעלת המצלמה
-        const video = document.getElementById('camera');
-        const canvas = document.getElementById('canvas');
-        const preview = document.getElementById('preview');
-        const captureButton = document.getElementById('capture');
-        const uploadInput = document.getElementById('upload');
-
-        // גישה למצלמה
-        navigator.mediaDevices.getUserMedia({ video: true })
-            .then(stream => {
-                video.srcObject = stream;
-            })
-            .catch(err => {
-                console.error("Error accessing the camera: ", err);
-            });
-
-        // צילום תמונה והצגתה
-        captureButton.addEventListener('click', () => {
-            const context = canvas.getContext('2d');
-            canvas.width = video.videoWidth;
-            canvas.height = video.videoHeight;
-            context.drawImage(video, 0, 0, canvas.width, canvas.height);
-
-            // הצגת התמונה כ-Preview
-            preview.src = canvas.toDataURL('image/png');
-            preview.style.display = 'block';
-        });
-
-        // תצוגה מקדימה של תמונה שהועלתה
-        uploadInput.addEventListener('change', (event) => {
-            const file = event.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    preview.src = e.target.result;
-                    preview.style.display = 'block';
-                };
-                reader.readAsDataURL(file);
-            }
-        });
-    </script>
 </body>
 </html>
