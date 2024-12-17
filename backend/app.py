@@ -1,52 +1,60 @@
 import base64
 from flask import Flask, render_template, send_from_directory, request, jsonify
-from flask_cors import CORS  # מאפשר CORS בין דומיינים שונים
 import os
 from io import BytesIO
 from PIL import Image
 
-# הגדרת ה-App עם Flask
-app = Flask(__name__, static_folder='../frontend/static', template_folder='../frontend/templates')
-CORS(app)  # מאפשר CORS
+# הגדרת תיקיות סטטיות ותבניות בצורה תקינה
+app = Flask(__name__, static_folder='../frontend', template_folder='../frontend')
 
 @app.route('/')
 def home():
-    return render_template('index.html')  # מציג את index.html
+    """הצגת עמוד הבית - index.html"""
+    return render_template('index.html')
 
 @app.route('/static/<path:filename>')
 def static_files(filename):
-    return send_from_directory(os.path.join(app.root_path, '../frontend/static'), filename)
+    """שירות לקבצים סטטיים"""
+    static_dir = os.path.join(app.root_path, '../frontend')
+    return send_from_directory(static_dir, filename)
 
 @app.route('/process', methods=['POST'])
 def process_image():
+    """עיבוד התמונה שנשלחת מה-Frontend"""
     try:
         # קבלת המידע מה-Frontend
         data = request.json
-        if 'image' not in data or 'country' not in data:
-            raise ValueError("Missing 'image' or 'country' in the request.")
+        if not data or 'image' not in data or 'country' not in data:
+            return jsonify({"error": "Missing 'image' or 'country' in request"}), 400
 
-        image_data = data['image']  # התמונה בפורמט base64
+        image_data = data['image']
         country = data['country']
 
-        # המרת התמונה לבינארי
+        # המרת התמונה מבסיס64 לבינארי
         header, encoded = image_data.split(",", 1)
         image_binary = base64.b64decode(encoded)
 
-        # טעינת התמונה לשמירה או עיבוד
+        # שמירת התמונה כקובץ זמני לבדיקה
+        temp_image_path = "uploaded_image.png"
         image = Image.open(BytesIO(image_binary))
-        image.save("uploaded_image.png")  # שמירת התמונה לבדיקה
+        image.save(temp_image_path)
 
-        # סימולציה לקריאת Azure Face API או חישוב הגיל
-        age = 25  # כאן ניתן להוסיף קריאה אמיתית ל-Azure API או אלגוריתם מתאים
+        # דימוי של קריאת Azure Face API (לצורך בדיקה)
+        age = 25  # ערך דמיוני לשם דוגמה
 
-        # יצירת לינק לפלייליסט מבוסס מדינה וגיל
+        # יצירת לינק לפלייליסט מותאם
         playlist_link = f"https://open.spotify.com/playlist/dummy_playlist_for_{country}_age_{age}"
 
         # שליחת התוצאה חזרה ל-Frontend
-        return jsonify({"age": age, "country": country, "playlist": playlist_link})
+        return jsonify({
+            "age": age,
+            "country": country,
+            "playlist": playlist_link
+        })
 
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        return jsonify({"error": f"An error occurred: {str(e)}"}), 500
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    # הפעלה מקומית של השרת
+    app.run(debug=True, host="0.0.0.0", port=5000)
