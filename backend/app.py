@@ -13,6 +13,7 @@ FACE_API_URL = f"{AZURE_ENDPOINT}face/v1.0/detect"
 # הגדרת Flask
 app = Flask(__name__, static_folder='../frontend', template_folder='../frontend')
 
+
 @app.route('/')
 def home():
     """הצגת עמוד הבית - index.html"""
