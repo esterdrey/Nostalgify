@@ -4,18 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Nostalgify</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    <script src="{{ url_for('static', filename='script.js') }}"></script>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
         <h1>Nostalgify</h1>
         <input type="file" id="upload" accept="image/*">
         <input type="text" id="country" placeholder="Enter your childhood country">
-        <img id="preview" alt="Image Preview">
+        <img id="preview" alt="Image Preview" style="display: none; max-width: 300px;">
         <button id="submit">Get Your Playlist</button>
         <div id="result"></div>
-        <div id="ages"></div>
     </div>
+    <script src="script.js"></script>
 </body>
 </html>

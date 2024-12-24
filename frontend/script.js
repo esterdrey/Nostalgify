@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
     const uploadInput = document.getElementById('upload');
-    const submitButton = document.getElementById('submit'); // ודא שזה מתאים למזהה ב-HTML
+    const submitButton = document.getElementById('submit');
     const preview = document.getElementById('preview');
     const resultDiv = document.getElementById('result');
     let imageData = null;
@@ -31,16 +31,21 @@ document.addEventListener('DOMContentLoaded', () => {
         fetch('/process', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ image: imageData, country })
+            body: JSON.stringify({ image: imageData, country }),
         })
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
         .then(data => {
             if (data.error) {
                 alert(`Error: ${data.error}`);
             } else {
-                resultDiv.innerHTML = `<p>Your playlist is ready: <a href="${data.playlist}" target="_blank">Open Playlist</a></p>`;
+                resultDiv.innerHTML = `<p>Age: ${data.age}</p>`;
             }
         })
         .catch(error => {
