@@ -42,11 +42,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 alert(`Error: ${data.error}`);
             } else {
                 resultDiv.innerHTML = `<p>Your playlist is ready: <a href="${data.playlist}" target="_blank">Open Playlist</a></p>`;
-                if (data.ages && data.ages.length > 0) {
-                    agesDiv.innerHTML = `<p>Detected Ages: ${data.ages.join(', ')}</p>`;
-                } else {
-                    agesDiv.innerHTML = '<p>No ages detected.</p>';
-                }
+                agesDiv.innerHTML = `<p>Detected Age: ${data.age}</p>`;
             }
         })
         .catch(error => {

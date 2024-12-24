@@ -6,60 +6,6 @@
     <title>Nostalgify</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <script src="{{ url_for('static', filename='script.js') }}"></script>
-    
-    <style>
-        /* עיצוב הבסיס */
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f9;
-            color: #333;
-            text-align: center;
-        }
-
-        h1 {
-            color: #5c67f2;
-            margin-top: 20px;
-        }
-
-        .container {
-            max-width: 600px;
-            margin: 30px auto;
-            background: #ffffff;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
-        }
-
-        #preview {
-            margin-top: 20px;
-            width: 100%;
-            border: 2px solid #ddd;
-            border-radius: 10px;
-            display: none;
-        }
-
-        #submit {
-            background-color: #5c67f2;
-            color: #fff;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
-            cursor: pointer;
-            margin: 10px;
-            font-size: 16px;
-        }
-
-        input[type="file"], input[type="text"] {
-            margin: 10px 0;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            width: calc(100% - 22px);
-            box-sizing: border-box;
-        }
-    </style>
 </head>
 <body>
     <div class="container">
