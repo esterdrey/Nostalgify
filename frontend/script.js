@@ -1,48 +1,53 @@
-document.getElementById('submit').addEventListener('click', async function () {
-    const fileInput = document.getElementById('fileInput');
-    const countryInput = document.getElementById('countryInput');
+document.addEventListener('DOMContentLoaded', () => {
+    const uploadInput = document.getElementById('upload'); 
+    const submitButton = document.getElementById('submit');
     const resultDiv = document.getElementById('result');
-    const country = countryInput.value;
+    const preview = document.getElementById('preview');
+    let imageData = null;
 
-    if (!fileInput.files[0]) {
-        alert('Please choose a file!');
-        return;
-    }
+    // העלאת תמונה קיימת
+    uploadInput.addEventListener('change', (event) => {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                imageData = e.target.result; // שמירת נתוני התמונה
+                preview.src = e.target.result; // הצגת התמונה
+                preview.style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+        }
+    });
 
-    const file = fileInput.files[0];
-    const reader = new FileReader();
-
-    reader.onload = async function () {
-        const imageData = reader.result;
-
-        try {
-            const response = await fetch('/process', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ image: imageData, country }),
-            });
-
-            console.log('Response status:', response.status);
-
-            if (!response.ok) {
-                throw new Error('Server error: ' + response.status);
-            }
-
-            const data = await response.json();
-            console.log('Response data:', data);
-
+    // שליחת נתונים לשרת
+    submitButton.addEventListener('click', () => {
+        const country = document.getElementById('country').value;
+        if (!imageData) {
+            alert('Please upload an image.');
+            return;
+        }
+        if (!country) {
+            alert('Please enter your childhood country.');
+            return;
+        }
+        fetch('/process', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ image: imageData, country })
+        })
+        .then(response => response.json())
+        .then(data => {
             if (data.error) {
                 alert(`Error: ${data.error}`);
             } else {
                 resultDiv.innerHTML = `<p>Your playlist is ready: <a href="${data.playlist}" target="_blank">Open Playlist</a></p>`;
             }
-        } catch (error) {
-            console.error('Fetch error:', error);
+        })
+        .catch(error => {
+            console.error('Error:', error);
             alert('An error occurred. Please try again.');
-        }
-    };
-
-    reader.readAsDataURL(file);
+        });
+    });
 });

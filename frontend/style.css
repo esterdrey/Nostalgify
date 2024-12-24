@@ -1,35 +1,69 @@
+/* בסיס */
 body {
     font-family: Arial, sans-serif;
+    text-align: center;
     margin: 0;
     padding: 0;
-    background-color: #f4f4f9;
-    color: #333;
-    text-align: center;
+    background-color: #f7f7f7;
 }
 
 .container {
-    margin: 50px auto;
+    max-width: 600px;
+    margin: 0 auto;
     padding: 20px;
-    max-width: 500px;
-    background-color: white;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 h1 {
-    color: #4caf50;
+    color: #333;
 }
 
-button {
-    background-color: #4caf50;
-    color: white;
-    border: none;
-    padding: 10px 20px;
+button, input {
     margin: 10px 0;
-    border-radius: 4px;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    width: 100%;
+    max-width: 300px;
     cursor: pointer;
 }
 
+button {
+    background-color: #007BFF;
+    color: white;
+}
+
 button:hover {
-    background-color: #45a049;
+    background-color: #0056b3;
+}
+
+input[type="file"] {
+    background-color: white;
+    cursor: pointer;
+}
+
+input[type="text"] {
+    border: 1px solid #ccc;
+    padding: 10px;
+    border-radius: 5px;
+    width: 100%;
+    max-width: 300px;
+    font-size: 16px;
+}
+
+.camera-container {
+    position: relative;
+    margin-bottom: 20px;
+}
+
+video {
+    width: 100%;
+    max-width: 300px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    display: block;
+    margin: 0 auto;
 }
