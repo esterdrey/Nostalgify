@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const uploadInput = document.getElementById('upload'); // שגיאה תוקנה
+    const uploadInput = document.getElementById('upload'); 
     const submitButton = document.getElementById('submit');
     const resultDiv = document.getElementById('result');
     const preview = document.getElementById('preview');
