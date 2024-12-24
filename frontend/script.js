@@ -42,10 +42,9 @@ document.addEventListener('DOMContentLoaded', () => {
             if (data.error) {
                 alert(`Error: ${data.error}`);
             } else {
-                // הצגת הגיל לצד הפלייליסט
-                const ages = data.ages.join(", ");
+                const faceCount = data.faceCount;
                 resultDiv.innerHTML = `
-                    <p>Detected age(s): ${ages}</p>
+                    <p>Detected ${faceCount} face(s) in the image.</p>
                     <p>Your playlist is ready: <a href="${data.playlist}" target="_blank">Open Playlist</a></p>
                 `;
             }

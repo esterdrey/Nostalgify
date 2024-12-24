@@ -36,7 +36,7 @@ def process_image():
             "Ocp-Apim-Subscription-Key": AZURE_API_KEY,
             "Content-Type": "application/octet-stream"
         }
-        params = {"returnFaceAttributes": "age"}  # Request age attribute
+        params = {}  # No additional attributes requested
         response = requests.post(FACE_API_URL, headers=headers, params=params, data=image_binary)
 
         if response.status_code != 200:
@@ -46,9 +46,8 @@ def process_image():
         if not faces:
             return jsonify({"error": "No face detected in the image"}), 400
 
-        # Extract age and count faces
+        # Count faces
         face_count = len(faces)
-        ages = [face['faceAttributes']['age'] for face in faces]
 
         # Create playlist link
         playlist_link = f"https://open.spotify.com/playlist/dummy_playlist_for_{country}_facecount_{face_count}"
@@ -56,7 +55,6 @@ def process_image():
         return jsonify({
             "message": "Face(s) detected successfully",
             "faceCount": face_count,
-            "ages": ages,
             "country": country,
             "playlist": playlist_link
         })
