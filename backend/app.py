@@ -1,21 +1,20 @@
+from flask import Flask, render_template, jsonify, request
 import base64
-import requests
-from flask import Flask, render_template, request, jsonify
 from io import BytesIO
 from PIL import Image
-from deepface import DeepFace  # ספריית DeepFace
+from deepface import DeepFace
 
-# הגדרת Flask
-app = Flask(__name__)
+# הגדרת Flask עם הנתיבים הנוכחיים שלך
+app = Flask(__name__, template_folder='../frontend', static_folder='../frontend')
 
 @app.route('/')
 def home():
-    """הצגת עמוד הבית - index.html"""
+    """הצגת עמוד הבית"""
     return render_template('index.html')
 
 @app.route('/process', methods=['POST'])
 def process_image():
-    """עיבוד תמונה וזיהוי פנים וגילאים באמצעות DeepFace"""
+    """עיבוד תמונה וזיהוי גיל"""
     try:
         # קבלת הנתונים מה-Frontend
         data = request.json
@@ -34,14 +33,14 @@ def process_image():
         image = Image.open(BytesIO(image_binary))
         image.save(temp_image_path)
 
-        # זיהוי גיל באמצעות DeepFace
+        # ניתוח תמונה עם DeepFace
         analysis = DeepFace.analyze(img_path=temp_image_path, actions=["age"], enforce_detection=False)
         age = analysis.get("age", "Unknown")
 
-        # יצירת לינק לפלייליסט מותאם
+        # יצירת קישור לפלייליסט
         playlist_link = f"https://open.spotify.com/playlist/dummy_playlist_for_{country}_age_{age}"
 
-        # החזרת התוצאה
+        # החזרת תשובה ל-Frontend
         return jsonify({
             "message": "Face analyzed successfully",
             "age": age,
@@ -50,7 +49,7 @@ def process_image():
         })
 
     except Exception as e:
-        return jsonify({"error": f"An error occurred : {str(e)}"}), 500
+        return jsonify({"error": f"An error occurred: {str(e)}"}), 500
 
 if __name__ == '__main__':
     app.run(debug=True, host="0.0.0.0", port=5000)
