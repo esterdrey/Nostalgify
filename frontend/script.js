@@ -42,7 +42,12 @@ document.addEventListener('DOMContentLoaded', () => {
             if (data.error) {
                 alert(`Error: ${data.error}`);
             } else {
-                resultDiv.innerHTML = `<p>Your playlist is ready: <a href="${data.playlist}" target="_blank">Open Playlist</a></p>`;
+                // הצגת הגיל לצד הפלייליסט
+                const ages = data.ages.join(", ");
+                resultDiv.innerHTML = `
+                    <p>Detected age(s): ${ages}</p>
+                    <p>Your playlist is ready: <a href="${data.playlist}" target="_blank">Open Playlist</a></p>
+                `;
             }
         })
         .catch(error => {
