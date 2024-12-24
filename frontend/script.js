@@ -1,25 +1,24 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const uploadInput = document.getElementById('upload'); 
+    const uploadInput = document.getElementById('upload');
     const submitButton = document.getElementById('submit');
     const resultDiv = document.getElementById('result');
     const preview = document.getElementById('preview');
+    const agesDiv = document.getElementById('ages');
     let imageData = null;
 
-    // העלאת תמונה קיימת
     uploadInput.addEventListener('change', (event) => {
         const file = event.target.files[0];
         if (file) {
             const reader = new FileReader();
             reader.onload = (e) => {
-                imageData = e.target.result; // שמירת נתוני התמונה
-                preview.src = e.target.result; // הצגת התמונה
+                imageData = e.target.result;
+                preview.src = e.target.result;
                 preview.style.display = 'block';
             };
             reader.readAsDataURL(file);
         }
     });
 
-    // שליחת נתונים לשרת
     submitButton.addEventListener('click', () => {
         const country = document.getElementById('country').value;
         if (!imageData) {
@@ -42,11 +41,12 @@ document.addEventListener('DOMContentLoaded', () => {
             if (data.error) {
                 alert(`Error: ${data.error}`);
             } else {
-                const faceCount = data.faceCount;
-                resultDiv.innerHTML = `
-                    <p>Detected ${faceCount} face(s) in the image.</p>
-                    <p>Your playlist is ready: <a href="${data.playlist}" target="_blank">Open Playlist</a></p>
-                `;
+                resultDiv.innerHTML = `<p>Your playlist is ready: <a href="${data.playlist}" target="_blank">Open Playlist</a></p>`;
+                if (data.ages && data.ages.length > 0) {
+                    agesDiv.innerHTML = `<p>Detected Ages: ${data.ages.join(', ')}</p>`;
+                } else {
+                    agesDiv.innerHTML = '<p>No ages detected.</p>';
+                }
             }
         })
         .catch(error => {
