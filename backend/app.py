@@ -3,6 +3,7 @@ import base64
 from io import BytesIO
 from PIL import Image
 from deepface import DeepFace
+import os
 
 # הגדרת Flask עם הנתיבים למבנה הקיים שלך
 app = Flask(__name__, template_folder='../frontend', static_folder='../frontend')
@@ -66,4 +67,5 @@ def process_image():
         return jsonify({"error": f"An error occurred: {str(e)}"}), 500
 
 if __name__ == '__main__':
-    app.run(debug=True, host="0.0.0.0", port=5000)
+    port = int(os.environ.get('PORT', 5000))  # ברירת מחדל: 5000 אם אין PORT מוגדר
+    app.run(debug=True, host="0.0.0.0", port=port)
