@@ -1,10 +1,11 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const uploadInput = document.getElementById('upload');
+    const uploadInput = document.getElementById('upload'); // שגיאה תוקנה
     const submitButton = document.getElementById('submit');
-    const preview = document.getElementById('preview');
     const resultDiv = document.getElementById('result');
+    const preview = document.getElementById('preview');
     let imageData = null;
 
+    // העלאת תמונה קיימת
     uploadInput.addEventListener('change', (event) => {
         const file = event.target.files[0];
         if (file) {
@@ -18,6 +19,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    // שליחת נתונים לשרת
     submitButton.addEventListener('click', () => {
         const country = document.getElementById('country').value;
         if (!imageData) {
@@ -31,21 +33,16 @@ document.addEventListener('DOMContentLoaded', () => {
         fetch('/process', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json',
+                'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ image: imageData, country }),
+            body: JSON.stringify({ image: imageData, country })
         })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            return response.json();
-        })
+        .then(response => response.json())
         .then(data => {
             if (data.error) {
                 alert(`Error: ${data.error}`);
             } else {
-                resultDiv.innerHTML = `<p>Age: ${data.age}</p>`;
+                resultDiv.innerHTML = `<p>Your playlist is ready: <a href="${data.playlist}" target="_blank">Open Playlist</a></p>`;
             }
         })
         .catch(error => {

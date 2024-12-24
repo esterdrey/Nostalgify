@@ -1,50 +1,78 @@
-from flask import Flask, render_template, jsonify, request
 import base64
+import requests
+from flask import Flask, render_template, send_from_directory, request, jsonify
+import os
 from io import BytesIO
 from PIL import Image
-from deepface import DeepFace
-import os
+
+# הגדרות ה-Azure Face API שלך
+AZURE_ENDPOINT = "https://nostalgifyapp.cognitiveservices.azure.com/"
+AZURE_API_KEY = "2iWX7sQ6mzHvGG18xGJQ2rUgbjInyQiQJ0o9pAB7BaO01c7tOxrAJQQJ99ALACYeBjFXJ3w3AAAKACOGc7zL"  # החלף במפתח ה-API שלך
+FACE_API_URL = f"{AZURE_ENDPOINT}face/v1.0/detect"
 
 # הגדרת Flask
-app = Flask(__name__, template_folder='../frontend', static_folder='../frontend')
+app = Flask(__name__, static_folder='../frontend', template_folder='../frontend')
 
 @app.route('/')
 def home():
-    """הצגת עמוד הבית"""
+    """הצגת עמוד הבית - index.html"""
     return render_template('index.html')
 
 @app.route('/process', methods=['POST'])
 def process_image():
-    """עיבוד תמונה וזיהוי גיל"""
+    """עיבוד תמונה וזיהוי פנים באמצעות Azure Face API"""
     try:
         # קבלת הנתונים מה-Frontend
         data = request.json
         if not data or 'image' not in data or 'country' not in data:
-            return jsonify({"error": "Missing 'image' or 'country'"}), 400
+            return jsonify({"error": "Missing 'image' or 'country' in request"}), 400
 
         image_data = data['image']
+        country = data['country']
+
+        # המרת התמונה לבינארי
         header, encoded = image_data.split(",", 1)
         image_binary = base64.b64decode(encoded)
 
-        # שמירת התמונה לקובץ זמני
+        # שמירת התמונה לבדיקה (אופציונלי)
         temp_image_path = "uploaded_image.png"
         image = Image.open(BytesIO(image_binary))
         image.save(temp_image_path)
 
-        # ניתוח תמונה עם DeepFace
-        analysis = DeepFace.analyze(img_path=temp_image_path, actions=["age"], enforce_detection=False)
-        age = analysis.get("age", "Unknown")
+        # שליחת התמונה ל-Azure Face API
+        headers = {
+            "Ocp-Apim-Subscription-Key": AZURE_API_KEY,
+            "Content-Type": "application/octet-stream"
+        }
 
-        # החזרת תשובה
+        # בקשה לזיהוי פנים בלבד (ללא תכונות נוספות)
+        response = requests.post(FACE_API_URL, headers=headers, data=image_binary)
+
+        # בדיקת תגובה
+        if response.status_code != 200:
+            return jsonify({"error": f"Azure API Error: {response.text}"}), response.status_code
+
+        # עיבוד התגובה מה-Azure
+        faces = response.json()
+        if not faces:
+            return jsonify({"error": "No face detected in the image"}), 400
+
+        # ספירת מספר הפנים שנמצאו
+        face_count = len(faces)
+
+        # יצירת לינק לפלייליסט מותאם
+        playlist_link = f"https://open.spotify.com/playlist/dummy_playlist_for_{country}_facecount_{face_count}"
+
+        # החזרת התוצאה
         return jsonify({
-            "message": "Face analyzed successfully",
-            "age": age
+            "message": "Face(s) detected successfully",
+            "faceCount": face_count,
+            "country": country,
+            "playlist": playlist_link
         })
 
     except Exception as e:
-        print(f"ERROR: {str(e)}")  # לוג לשרת
-        return jsonify({"error": f"An error occurred: {str(e)}"}), 500
+        return jsonify({"error": f"An error occurred : {str(e)}"}), 500
 
 if __name__ == '__main__':
-    port = int(os.environ.get('PORT', 5000))  # Render דורש להשתמש במשתנה PORT
-    app.run(debug=True, host="0.0.0.0", port=port)
+    app.run(debug=True, host="0.0.0.0", port=5000)
