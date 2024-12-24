@@ -1,26 +1,48 @@
 import base64
 import requests
-from flask import Flask, render_template, send_from_directory, request, jsonify
+from flask import Flask, render_template, request, jsonify
 import os
 from io import BytesIO
 from PIL import Image
+from datetime import datetime
+from spotipy import Spotify
+from spotipy.oauth2 import SpotifyClientCredentials
 
-# הגדרות ה-Azure Face API שלך
+# הגדרות Azure Face API
 AZURE_ENDPOINT = "https://nostalgifyapp.cognitiveservices.azure.com/"
-AZURE_API_KEY = "2iWX7sQ6mzHvGG18xGJQ2rUgbjInyQiQJ0o9pAB7BaO01c7tOxrAJQQJ99ALACYeBjFXJ3w3AAAKACOGc7zL"  # החלף במפתח ה-API שלך
+AZURE_API_KEY = "הכנס_את_מפתח_הAPI_כאן"
 FACE_API_URL = f"{AZURE_ENDPOINT}face/v1.0/detect"
 
+# הגדרות Spotipy
+SPOTIFY_CLIENT_ID = "הכנס_את_ה-Client_ID_שלך"
+SPOTIFY_CLIENT_SECRET = "הכנס_את_ה-Client_Secret_שלך"
+
+# אתחול Spotipy
+spotify = Spotify(auth_manager=SpotifyClientCredentials(
+    client_id=SPOTIFY_CLIENT_ID,
+    client_secret=SPOTIFY_CLIENT_SECRET
+))
+
 # הגדרת Flask
-app = Flask(__name__, static_folder='../frontend', template_folder='../frontend')
+app = Flask(__name__)
 
 @app.route('/')
 def home():
     """הצגת עמוד הבית - index.html"""
     return render_template('index.html')
 
+def get_spotify_playlist(decade, country):
+    """חיפוש פלייליסט ב-Spotify לפי עשור ומדינה"""
+    query = f"top hits {decade} {country}"
+    results = spotify.search(q=query, type='playlist', limit=1)
+    if results['playlists']['items']:
+        return results['playlists']['items'][0]['external_urls']['spotify']
+    else:
+        return None
+
 @app.route('/process', methods=['POST'])
 def process_image():
-    """עיבוד תמונה וזיהוי פנים באמצעות Azure Face API"""
+    """עיבוד תמונה וזיהוי גיל באמצעות Azure Face API ויצירת פלייליסט מותאם"""
     try:
         # קבלת הנתונים מה-Frontend
         data = request.json
@@ -34,39 +56,39 @@ def process_image():
         header, encoded = image_data.split(",", 1)
         image_binary = base64.b64decode(encoded)
 
-        # שמירת התמונה לבדיקה (אופציונלי)
-        temp_image_path = "uploaded_image.png"
-        image = Image.open(BytesIO(image_binary))
-        image.save(temp_image_path)
-
         # שליחת התמונה ל-Azure Face API
         headers = {
             "Ocp-Apim-Subscription-Key": AZURE_API_KEY,
             "Content-Type": "application/octet-stream"
         }
+        params = {
+            "returnFaceAttributes": "age"
+        }
 
-        # בקשה לזיהוי פנים בלבד (ללא תכונות נוספות)
-        response = requests.post(FACE_API_URL, headers=headers, data=image_binary)
+        response = requests.post(FACE_API_URL, headers=headers, params=params, data=image_binary)
 
-        # בדיקת תגובה
         if response.status_code != 200:
             return jsonify({"error": f"Azure API Error: {response.text}"}), response.status_code
 
-        # עיבוד התגובה מה-Azure
         faces = response.json()
         if not faces:
             return jsonify({"error": "No face detected in the image"}), 400
 
-        # ספירת מספר הפנים שנמצאו
-        face_count = len(faces)
+        # ניתוח הגיל
+        age = faces[0]['faceAttributes']['age']
+        current_year = datetime.now().year
+        childhood_year = current_year - int(age) + 10
+        decade = (childhood_year // 10) * 10
 
-        # יצירת לינק לפלייליסט מותאם
-        playlist_link = f"https://open.spotify.com/playlist/dummy_playlist_for_{country}_facecount_{face_count}"
+        # שימוש ב-Spotipy לחיפוש פלייליסט
+        playlist_link = get_spotify_playlist(decade, country)
+        if not playlist_link:
+            return jsonify({"error": "No playlist found"}), 404
 
-        # החזרת התוצאה
         return jsonify({
-            "message": "Face(s) detected successfully",
-            "faceCount": face_count,
+            "message": "Face and age detected successfully",
+            "age": age,
+            "decade": decade,
             "country": country,
             "playlist": playlist_link
         })
