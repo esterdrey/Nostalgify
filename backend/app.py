@@ -49,7 +49,7 @@ def process_image():
    
 
         # יצירת לינק לפלייליסט מותאם
-        playlist_link = f"https://open.spotify.com/playlist/dummy_playlist_for_{country}_facecount_{face_count}"
+        playlist_link = f"https://open.spotify.com/playlist/dummy_playlist_for_{country}_facecount_{age}"
 
   
     except Exception as e:
