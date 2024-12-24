@@ -4,11 +4,7 @@ from flask import Flask, render_template, send_from_directory, request, jsonify
 import os
 from io import BytesIO
 from PIL import Image
-
-# הגדרות ה-Azure Face API שלך
-AZURE_ENDPOINT = "https://nostalgifyapp.cognitiveservices.azure.com/"
-AZURE_API_KEY = "2iWX7sQ6mzHvGG18xGJQ2rUgbjInyQiQJ0o9pAB7BaO01c7tOxrAJQQJ99ALACYeBjFXJ3w3AAAKACOGc7zL"  # החלף במפתח ה-API שלך
-FACE_API_URL = f"{AZURE_ENDPOINT}face/v1.0/detect"
+from deepface import DeepFace
 
 # הגדרת Flask
 app = Flask(__name__, static_folder='../frontend', template_folder='../frontend')
