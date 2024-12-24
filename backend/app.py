@@ -5,23 +5,11 @@ import os
 from io import BytesIO
 from PIL import Image
 from datetime import datetime
-from spotipy import Spotify
-from spotipy.oauth2 import SpotifyClientCredentials
 
 # הגדרות Azure Face API
 AZURE_ENDPOINT = "https://nostalgifyapp.cognitiveservices.azure.com/"
-AZURE_API_KEY = "הכנס_את_מפתח_הAPI_כאן"
+AZURE_API_KEY = "2iWX7sQ6mzHvGG18xGJQ2rUgbjInyQiQJ0o9pAB7BaO01c7tOxrAJQQJ99ALACYeBjFXJ3w3AAAKACOGc7zL"
 FACE_API_URL = f"{AZURE_ENDPOINT}face/v1.0/detect"
-
-# הגדרות Spotipy
-SPOTIFY_CLIENT_ID = "הכנס_את_ה-Client_ID_שלך"
-SPOTIFY_CLIENT_SECRET = "הכנס_את_ה-Client_Secret_שלך"
-
-# אתחול Spotipy
-spotify = Spotify(auth_manager=SpotifyClientCredentials(
-    client_id=SPOTIFY_CLIENT_ID,
-    client_secret=SPOTIFY_CLIENT_SECRET
-))
 
 # הגדרת Flask
 app = Flask(__name__)
@@ -31,26 +19,16 @@ def home():
     """הצגת עמוד הבית - index.html"""
     return render_template('index.html')
 
-def get_spotify_playlist(decade, country):
-    """חיפוש פלייליסט ב-Spotify לפי עשור ומדינה"""
-    query = f"top hits {decade} {country}"
-    results = spotify.search(q=query, type='playlist', limit=1)
-    if results['playlists']['items']:
-        return results['playlists']['items'][0]['external_urls']['spotify']
-    else:
-        return None
-
 @app.route('/process', methods=['POST'])
 def process_image():
-    """עיבוד תמונה וזיהוי גיל באמצעות Azure Face API ויצירת פלייליסט מותאם"""
+    """עיבוד תמונה וזיהוי גיל ויצירת פלייליסט אמיתי מותאם לעשור"""
     try:
         # קבלת הנתונים מה-Frontend
         data = request.json
-        if not data or 'image' not in data or 'country' not in data:
-            return jsonify({"error": "Missing 'image' or 'country' in request"}), 400
+        if not data or 'image' not in data:
+            return jsonify({"error": "Missing 'image' in request"}), 400
 
         image_data = data['image']
-        country = data['country']
 
         # המרת התמונה לבינארי
         header, encoded = image_data.split(",", 1)
@@ -80,16 +58,26 @@ def process_image():
         childhood_year = current_year - int(age) + 10
         decade = (childhood_year // 10) * 10
 
-        # שימוש ב-Spotipy לחיפוש פלייליסט
-        playlist_link = get_spotify_playlist(decade, country)
-        if not playlist_link:
-            return jsonify({"error": "No playlist found"}), 404
+        # רשימה של פלייליסטים אמיתיים לפי עשור
+        playlists = {
+            1950: "https://open.spotify.com/playlist/37i9dQZF1DXaKIA8E7WcJj",
+            1960: "https://open.spotify.com/playlist/37i9dQZF1DXbTxeAdrVG2l",
+            1970: "https://open.spotify.com/playlist/37i9dQZF1DWTJ7xPn4vNaz",
+            1980: "https://open.spotify.com/playlist/37i9dQZF1DX4UtSsGT1Sbe",
+            1990: "https://open.spotify.com/playlist/37i9dQZF1DXbTxeAdrVG2l",
+            2000: "https://open.spotify.com/playlist/37i9dQZF1DX4o1oenSJRJd",
+            2010: "https://open.spotify.com/playlist/37i9dQZF1DX5Ejj0EkURtP",
+            2020: "https://open.spotify.com/playlist/37i9dQZF1DX0h0QnLkMBl4"
+        }
 
+        # בחירת פלייליסט לפי העשור
+        playlist_link = playlists.get(decade, "https://open.spotify.com/playlist/37i9dQZF1DXcBWIGoYBM5M")  # פלייליסט כללי אם אין התאמה
+
+        # החזרת התוצאה
         return jsonify({
             "message": "Face and age detected successfully",
             "age": age,
             "decade": decade,
-            "country": country,
             "playlist": playlist_link
         })
 
