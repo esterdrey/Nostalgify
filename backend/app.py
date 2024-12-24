@@ -16,7 +16,7 @@ def home():
 
 @app.route('/process', methods=['POST'])
 def process_image():
-    """עיבוד תמונה וזיהוי פנים באמצעות Azure Face API"""
+ 
     try:
         # קבלת הנתונים מה-Frontend
         data = request.json
