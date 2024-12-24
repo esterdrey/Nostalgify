@@ -35,11 +35,7 @@ def process_image():
         image = Image.open(BytesIO(image_binary))
         image.save(temp_image_path)
 
-        # שליחת התמונה ל-Azure Face API
-        headers = {
-            "Ocp-Apim-Subscription-Key": AZURE_API_KEY,
-            "Content-Type": "application/octet-stream"
-        }
+
 
         # בקשה לזיהוי פנים בלבד (ללא תכונות נוספות)
         response = requests.post(FACE_API_URL, headers=headers, data=image_binary)
