@@ -4,7 +4,9 @@ from flask import Flask, render_template, send_from_directory, request, jsonify
 import os
 from io import BytesIO
 from PIL import Image
-from deepface import DeepFace
+from deepface.commons import functions
+functions.backend = "torch"
+
 
 # הגדרת Flask
 app = Flask(__name__, static_folder='../frontend', template_folder='../frontend')
@@ -38,7 +40,7 @@ def process_image():
         image.save(temp_image_path)
 
         # ניתוח גיל 
-        result = DeepFace.analyze(img_path=temp_image_path, actions=["age"])
+        result = functions.analyze(img_path=temp_image_path, actions=["age"])
         age = result.get("age", "Unknown")
 
         # ניקוי קובץ זמני
