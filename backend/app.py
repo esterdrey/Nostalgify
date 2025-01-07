@@ -40,7 +40,7 @@ def process_image():
         image.save(temp_image_path)
 
         # ניתוח גיל 
-        result = functions.analyze(img_path=temp_image_path, actions=["age"])
+        result = DeepFace.analyze(img_path=temp_image_path, actions=["age"])
         age = result.get("age", "Unknown")
 
         # ניקוי קובץ זמני
