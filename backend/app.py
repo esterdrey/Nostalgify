@@ -11,7 +11,7 @@ app = Flask(__name__, static_folder='../frontend', template_folder='../frontend'
 
 @app.route('/')
 def home():
-    """הצגת עמוד הבית - index.html"""
+    """ הצגת עמוד הבית - index.html"""
     return render_template('index.html')
 
 @app.route('/process', methods=['POST'])
