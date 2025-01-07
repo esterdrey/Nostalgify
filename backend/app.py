@@ -7,6 +7,7 @@ from io import BytesIO
 from PIL import Image
 from deepface import DeepFace
 from deepface.commons import functions
+os.environ["DEEPFACE_BACKEND"] = "torch"
 os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
 functions.backend = "torch"
 
