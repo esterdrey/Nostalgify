@@ -1,4 +1,5 @@
 import base64
+import os
 import requests
 from flask import Flask, render_template, send_from_directory, request, jsonify
 import os
@@ -6,6 +7,7 @@ from io import BytesIO
 from PIL import Image
 from deepface import DeepFace
 from deepface.commons import functions
+os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
 functions.backend = "torch"
 
 
@@ -69,4 +71,6 @@ def add_header(response):
     return response
 
 if __name__ == '__main__':
-    app.run(debug=True, host="0.0.0.0", port=5000)
+    # app.run(debug=True, host="0.0.0.0", port=5000) 
+    port = int(os.environ.get("PORT", 5000)) 
+    app.run(debug=True, host="0.0.0.0", port=port)
