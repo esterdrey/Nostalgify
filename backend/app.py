@@ -58,5 +58,14 @@ def process_image():
     except Exception as e:
         return jsonify({"error": f"An error occurred : {str(e)}"}), 500
 
+@app.route('/frontend/<path:filename>')
+def serve_static_files(filename):
+    return send_from_directory('../frontend', filename)
+
+@app.after_request
+def add_header(response):
+    response.headers['Cache-Control'] = 'no-store'
+    return response
+
 if __name__ == '__main__':
     app.run(debug=True, host="0.0.0.0", port=5000)
