@@ -9,10 +9,16 @@ from PIL import Image
 # הגדרת Flask
 app = Flask(__name__, static_folder='../frontend', template_folder='../frontend')
 
-def predict_age(image_path):
+# מודל PyTorch נטען מראש
+model = None
+def load_model():
+    global model
     model = torch.hub.load('yu4u/age-gender-estimation', 'age_model', pretrained=True)
     model.eval()
 
+load_model()
+
+def predict_age(image_path):
     transform = transforms.Compose([
         transforms.Resize((224, 224)),
         transforms.ToTensor(),
@@ -28,17 +34,13 @@ def predict_age(image_path):
 
     return predicted_age
 
-
 @app.route('/')
 def home():
-    """ הצגת עמוד הבית - index.html"""
     return render_template('index.html')
 
 @app.route('/process', methods=['POST'])
 def process_image():
- 
     try:
-        # קבלת הנתונים מה-Frontend
         data = request.json
         if not data or 'image' not in data or 'country' not in data:
             return jsonify({"error": "Missing 'image' or 'country' in request"}), 400
@@ -46,34 +48,28 @@ def process_image():
         image_data = data['image']
         country = data['country']
 
-        # והפרדת HEADER המרת התמונה לבינארי
-        header, encoded = image_data.split(",", 1)
-        image_binary = base64.b64decode(encoded)
+        # עיבוד התמונה
+        try:
+            header, encoded = image_data.split(",", 1)
+            image_binary = base64.b64decode(encoded)
+            image = Image.open(BytesIO(image_binary)).convert("RGB")
+        except Exception:
+            return jsonify({"error": "Invalid image format"}), 400
 
-        #יצירת אובייקט תמונה 
-        image = Image.open(BytesIO(image_binary))
-
-        # שמירת התמונה לקובץ זמני)
+        # שמירת התמונה לקובץ זמני
         temp_image_path = "temp_image.jpg"
         image.save(temp_image_path)
 
-        # ניתוח גיל 
+        # חיזוי גיל
         age = predict_age(temp_image_path)
-
-        # ניקוי קובץ זמני
         os.remove(temp_image_path)
 
-        # החזרת הגיל כמספר בלבד
-        #return str(age)
-   
-
-        # יצירת לינק לפלייליסט מותאם
+        # יצירת לינק מותאם
         playlist_link = f"https://open.spotify.com/playlist/dummy_playlist_for_{country}_facecount_{age}"
         return jsonify({"playlist": playlist_link, "age": age})
 
-  
     except Exception as e:
-        return jsonify({"error": f"An error occurred : {str(e)}"}), 500
+        return jsonify({"error": f"An error occurred: {str(e)}"}), 500
 
 @app.route('/frontend/<path:filename>')
 def serve_static_files(filename):
@@ -85,6 +81,5 @@ def add_header(response):
     return response
 
 if __name__ == '__main__':
-    # app.run(debug=True, host="0.0.0.0", port=5000) 
-    port = int(os.environ.get("PORT", 5000)) 
+    port = int(os.environ.get("PORT", 5000))
     app.run(debug=True, host="0.0.0.0", port=port)
