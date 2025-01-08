@@ -14,20 +14,25 @@ logging.basicConfig(level=logging.DEBUG)
 
 # פונקציה לטעינת מודל InsightFace בצורה דינמית
 def load_insightface_model():
-    model = insightface.app.FaceAnalysis(name='buffalo_l')  # מודל חסכוני יותר
+    model = insightface.app.FaceAnalysis(name='buffalo_s')  # מודל קטן יותר
     model.prepare(ctx_id=-1)  # שימוש ב-CPU בלבד
     return model
 
 # פונקציה לזיהוי גיל
 def predict_age_with_insightface(image_path):
+    logging.debug("Loading InsightFace model...")
     model = load_insightface_model()  # טוען את המודל רק בזמן ריצה
     img = Image.open(image_path).convert("RGB")
     img = np.array(img)
 
+    logging.debug("Running face analysis...")
     faces = model.get(img)
+    logging.debug(f"Faces detected: {len(faces)}")
+
     del model  # משחרר את המודל מהזיכרון לאחר השימוש
 
     if faces:
+        logging.debug(f"Detected face details: {faces[0]}")
         return faces[0].age  # מחזיר את הגיל של הפנים הראשונות
     return "Unknown"
 
@@ -66,7 +71,7 @@ def process_image():
         # יצירת לינק מותאם
         playlist_link = f"https://open.spotify.com/playlist/dummy_playlist_for_{country}_facecount_{age}"
         logging.debug(f"Generated playlist link: {playlist_link}")
-        
+
         return jsonify({"playlist": playlist_link, "age": age})
 
     except Exception as e:
