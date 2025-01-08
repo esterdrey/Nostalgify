@@ -1,46 +1,3 @@
-import base64
-import os
-import numpy as np
-import logging
-from flask import Flask, render_template, request, jsonify
-from PIL import Image
-import insightface
-
-# הגדרת Flask
-app = Flask(__name__, static_folder='../frontend', template_folder='../frontend')
-
-# קביעת רמת לוגים
-logging.basicConfig(level=logging.DEBUG)
-
-# פונקציה לטעינת מודל InsightFace בצורה דינמית
-def load_insightface_model():
-    model = insightface.app.FaceAnalysis(name='buffalo_s')  # מודל קטן יותר
-    model.prepare(ctx_id=-1)  # שימוש ב-CPU בלבד
-    return model
-
-# פונקציה לזיהוי גיל
-def predict_age_with_insightface(image_path):
-    logging.debug("Loading InsightFace model...")
-    model = load_insightface_model()  # טוען את המודל רק בזמן ריצה
-    img = Image.open(image_path).convert("RGB")
-    img = np.array(img)
-
-    logging.debug("Running face analysis...")
-    faces = model.get(img)
-    logging.debug(f"Faces detected: {len(faces)}")
-
-    del model  # משחרר את המודל מהזיכרון לאחר השימוש
-
-    if faces:
-        logging.debug(f"Detected face details: {faces[0]}")
-        return faces[0].age  # מחזיר את הגיל של הפנים הראשונות
-    return "Unknown"
-
-@app.route('/')
-def home():
-    """ מציג את עמוד הבית - index.html """
-    return render_template('index.html')
-
 @app.route('/process', methods=['POST'])
 def process_image():
     try:
@@ -77,7 +34,3 @@ def process_image():
     except Exception as e:
         logging.exception("An error occurred in /process")
         return jsonify({"error": f"Server error: {str(e)}"}), 500
-
-if __name__ == '__main__':
-    port = int(os.environ.get("PORT", 5000))
-    app.run(debug=True, host="0.0.0.0", port=port)
