@@ -1,46 +1,42 @@
 import base64
 import os
-import torch
-from torchvision import transforms
+import numpy as np
 from flask import Flask, render_template, send_from_directory, request, jsonify
 from io import BytesIO
 from PIL import Image
+import insightface
 
 # הגדרת Flask
 app = Flask(__name__, static_folder='../frontend', template_folder='../frontend')
 
-# מודל PyTorch נטען מראש
-model = None
-def load_model():
-    global model
-    model = torch.hub.load('yu4u/age-gender-estimation', 'age_model', pretrained=True)
-    model.eval()
+# טוען את מודל InsightFace
+def load_insightface_model():
+    model = insightface.app.FaceAnalysis()
+    model.prepare(ctx_id=-1)  # שימוש ב-CPU בלבד
+    return model
 
-load_model()
+# טוען את המודל בתחילת התוכנית
+model = load_insightface_model()
 
-def predict_age(image_path):
-    transform = transforms.Compose([
-        transforms.Resize((224, 224)),
-        transforms.ToTensor(),
-        transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
-    ])
+# זיהוי גיל באמצעות InsightFace
+def predict_age_with_insightface(image_path, model):
+    img = Image.open(image_path).convert("RGB")
+    img = np.array(img)
 
-    image = Image.open(image_path).convert("RGB")
-    image_tensor = transform(image).unsqueeze(0)
-
-    with torch.no_grad():
-        output = model(image_tensor)
-        predicted_age = output.argmax().item()
-
-    return predicted_age
+    faces = model.get(img)
+    if faces:
+        return faces[0].age  # החזרת הגיל של הפנים הראשונות
+    return "Unknown"
 
 @app.route('/')
 def home():
+    """ הצגת עמוד הבית - index.html """
     return render_template('index.html')
 
 @app.route('/process', methods=['POST'])
 def process_image():
     try:
+        # קבלת הנתונים מה-Frontend
         data = request.json
         if not data or 'image' not in data or 'country' not in data:
             return jsonify({"error": "Missing 'image' or 'country' in request"}), 400
@@ -48,7 +44,7 @@ def process_image():
         image_data = data['image']
         country = data['country']
 
-        # עיבוד התמונה
+        # המרת התמונה לבינארי
         try:
             header, encoded = image_data.split(",", 1)
             image_binary = base64.b64decode(encoded)
@@ -60,8 +56,8 @@ def process_image():
         temp_image_path = "temp_image.jpg"
         image.save(temp_image_path)
 
-        # חיזוי גיל
-        age = predict_age(temp_image_path)
+        # חיזוי גיל באמצעות InsightFace
+        age = predict_age_with_insightface(temp_image_path, model)
         os.remove(temp_image_path)
 
         # יצירת לינק מותאם
