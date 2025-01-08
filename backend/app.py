@@ -5,11 +5,8 @@ from flask import Flask, render_template, send_from_directory, request, jsonify
 import os
 from io import BytesIO
 from PIL import Image
-from deepface import DeepFace
-from deepface.commons import functions
-os.environ["DEEPFACE_BACKEND"] = "torch"
+from deepage import DeepAge
 os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
-functions.backend = "torch"
 
 
 # הגדרת Flask
@@ -44,8 +41,8 @@ def process_image():
         image.save(temp_image_path)
 
         # ניתוח גיל 
-        result = DeepFace.analyze(img_path=temp_image_path, actions=["age"])
-        age = result.get("age", "Unknown")
+        analyzer = DeepAge()
+        age = analyzer.predict_age(temp_image_path)
 
         # ניקוי קובץ זמני
         os.remove(temp_image_path)
