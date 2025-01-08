@@ -9,9 +9,9 @@ import insightface
 # הגדרת Flask
 app = Flask(__name__, static_folder='../frontend', template_folder='../frontend')
 
-# טוען את מודל InsightFace
+# טוען את מודל InsightFace עם מודל קל יותר
 def load_insightface_model():
-    model = insightface.app.FaceAnalysis()
+    model = insightface.app.FaceAnalysis(name='buffalo_s')  # מודל קטן יותר
     model.prepare(ctx_id=-1)  # שימוש ב-CPU בלבד
     return model
 
@@ -23,14 +23,15 @@ def predict_age_with_insightface(image_path, model):
     img = Image.open(image_path).convert("RGB")
     img = np.array(img)
 
+    # ניתוח הפנים בתמונה
     faces = model.get(img)
     if faces:
-        return faces[0].age  # החזרת הגיל של הפנים הראשונות
+        return faces[0].age  # מחזיר את הגיל של הפנים הראשונות
     return "Unknown"
 
 @app.route('/')
 def home():
-    """ הצגת עמוד הבית - index.html """
+    """ מציג את עמוד הבית - index.html """
     return render_template('index.html')
 
 @app.route('/process', methods=['POST'])
@@ -60,6 +61,9 @@ def process_image():
         age = predict_age_with_insightface(temp_image_path, model)
         os.remove(temp_image_path)
 
+        # ניקוי זיכרון
+        del image, image_binary
+
         # יצירת לינק מותאם
         playlist_link = f"https://open.spotify.com/playlist/dummy_playlist_for_{country}_facecount_{age}"
         return jsonify({"playlist": playlist_link, "age": age})
@@ -73,6 +77,7 @@ def serve_static_files(filename):
 
 @app.after_request
 def add_header(response):
+    """ מונע שמירה של קבצים במטמון """
     response.headers['Cache-Control'] = 'no-store'
     return response
 
