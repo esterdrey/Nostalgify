@@ -10,20 +10,26 @@ from PIL import Image
 # הגדרת Flask
 app = Flask(__name__, static_folder='../frontend', template_folder='../frontend')
 
+import requests
+
 def predict_age(image_path):
     url = "https://api.deepai.org/api/demographic-recognition"
-    with open(image_path, 'rb') as image_file:
-        response = requests.post(
-            url,
-            files={'image': image_file},
-            headers={'api-key': '6e1b8fec-b405-41c6-813e-6a820e93f9f5'}
-        )
-    result = response.json()
     try:
-        age = result['output']['faces'][0]['age']
-        return age
-    except (KeyError, IndexError):
-        return "Error: Unable to detect age."
+        with open(image_path, 'rb') as image_file:
+            response = requests.post(
+                url,
+                files={'image': image_file},
+                headers={'api-key': '6e1b8fec-b405-41c6-813e-6a820e93f9f5'}
+            )
+        result = response.json()
+        if 'output' in result and 'faces' in result['output'] and len(result['output']['faces']) > 0:
+            age = result['output']['faces'][0]['age']
+            return age
+        else:
+            return "Error: No faces detected."
+    except Exception as e:
+        return f"Error: {str(e)}"
+
 
 
 @app.route('/')
