@@ -2,8 +2,9 @@
 document.addEventListener('DOMContentLoaded', async () => {
     try {
         // טוענים את המודלים מהתיקייה /models
-        await faceapi.nets.ssdMobilenetv1.loadFromUri('/models');
-        await faceapi.nets.ageGenderNet.loadFromUri('/models');
+        await faceapi.nets.ssdMobilenetv1.loadFromUri('/static/models');
+        await faceapi.nets.ageGenderNet.loadFromUri('/static/models');
+
         console.log("Models loaded successfully.");
     } catch (error) {
         console.error("Error loading models:", error);

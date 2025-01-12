@@ -37,6 +37,15 @@ def home():
     """ הצגת עמוד הבית - index.html"""
     return render_template('index.html')
 
+# ראוט לטעינת מודלים מהתיקייה static
+@app.route('/static/models/<path:filename>')
+def serve_models(filename):
+    return send_from_directory('static/models', filename)
+
+@app.route('/frontend/<path:filename>')
+def serve_static_files(filename):
+    return send_from_directory('../frontend', filename)
+
 @app.route('/process', methods=['POST'])
 def process_image():
  
@@ -78,13 +87,6 @@ def process_image():
     except Exception as e:
         return jsonify({"error": f"An error occurred : {str(e)}"}), 500
 
-@app.route('/models/<path:filename>')
-def serve_models(filename):
-    return send_from_directory('models', filename)
-
-@app.route('/frontend/<path:filename>')
-def serve_static_files(filename):
-    return send_from_directory('../frontend', filename)
 
 @app.after_request
 def add_header(response):
