@@ -10,21 +10,6 @@ from PIL import Image
 # הגדרת Flask
 app = Flask(__name__, static_folder='../frontend', template_folder='../frontend')
 
-def predict_age(image_path):
-    url = "https://api.deepai.org/api/demographic-recognition"
-    with open(image_path, 'rb') as image_file:
-        response = requests.post(
-            url,
-            files={'image': image_file},
-            headers={'api-key': '6e1b8fec-b405-41c6-813e-6a820e93f9f5'}
-        )
-    result = response.json()
-    try:
-        age = result['output']['faces'][0]['age']
-        return age
-    except (KeyError, IndexError):
-        return "Error: Unable to detect age."
-
 
 @app.route('/')
 def home():
@@ -37,32 +22,12 @@ def process_image():
     try:
         # קבלת הנתונים מה-Frontend
         data = request.json
-        if not data or 'image' not in data or 'country' not in data:
-            return jsonify({"error": "Missing 'image' or 'country' in request"}), 400
+        age = data.get('age')
+        country = data.get('country')
 
-        image_data = data['image']
-        country = data['country']
+        if not age or not country:
+            return jsonify({"error": "Missing age or country in request"}), 400
 
-        # והפרדת HEADER המרת התמונה לבינארי
-        header, encoded = image_data.split(",", 1)
-        image_binary = base64.b64decode(encoded)
-
-        #יצירת אובייקט תמונה 
-        image = Image.open(BytesIO(image_binary))
-
-        # שמירת התמונה לקובץ זמני)
-        temp_image_path = "temp_image.jpg"
-        image.save(temp_image_path)
-
-        # ניתוח גיל 
-        age = predict_age(temp_image_path)
-
-        # ניקוי קובץ זמני
-        os.remove(temp_image_path)
-
-        # החזרת הגיל כמספר בלבד
-        #return str(age)
-   
 
         # יצירת לינק לפלייליסט מותאם
         playlist_link = f"https://open.spotify.com/playlist/dummy_playlist_for_{country}_facecount_{age}"
