@@ -10,41 +10,26 @@ from PIL import Image
 # הגדרת Flask
 app = Flask(__name__, static_folder='../frontend', template_folder='../frontend')
 
-import requests
-
 def predict_age(image_path):
     url = "https://api.deepai.org/api/demographic-recognition"
+    with open(image_path, 'rb') as image_file:
+        response = requests.post(
+            url,
+            files={'image': image_file},
+            headers={'api-key': '6e1b8fec-b405-41c6-813e-6a820e93f9f5'}
+        )
+    result = response.json()
     try:
-        with open(image_path, 'rb') as image_file:
-            response = requests.post(
-                url,
-                files={'image': image_file},
-                headers={'api-key': '6e1b8fec-b405-41c6-813e-6a820e93f9f5'}
-            )
-        result = response.json()
-        if 'output' in result and 'faces' in result['output'] and len(result['output']['faces']) > 0:
-            age = result['output']['faces'][0]['age']
-            return age
-        else:
-            return "Error: No faces detected."
-    except Exception as e:
-        return f"Error: {str(e)}"
-
+        age = result['output']['faces'][0]['age']
+        return age
+    except (KeyError, IndexError):
+        return "Error: Unable to detect age."
 
 
 @app.route('/')
 def home():
     """ הצגת עמוד הבית - index.html"""
     return render_template('index.html')
-
-# ראוט לטעינת מודלים מהתיקייה static
-@app.route('/static/models/<path:filename>')
-def serve_models(filename):
-    return send_from_directory('static/models', filename)
-
-@app.route('/frontend/<path:filename>')
-def serve_static_files(filename):
-    return send_from_directory('../frontend', filename)
 
 @app.route('/process', methods=['POST'])
 def process_image():
@@ -87,6 +72,9 @@ def process_image():
     except Exception as e:
         return jsonify({"error": f"An error occurred : {str(e)}"}), 500
 
+@app.route('/frontend/<path:filename>')
+def serve_static_files(filename):
+    return send_from_directory('../frontend', filename)
 
 @app.after_request
 def add_header(response):
