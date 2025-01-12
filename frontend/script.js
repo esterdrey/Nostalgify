@@ -3,54 +3,45 @@ document.addEventListener('DOMContentLoaded', () => {
     const submitButton = document.getElementById('submit');
     const resultDiv = document.getElementById('result');
     const preview = document.getElementById('preview');
-    let imageData = null;
 
-    // העלאת תמונה קיימת
-    uploadInput.addEventListener('change', (event) => {
+    // אתחול Mediapipe Face Detection
+    const faceDetector = new FaceDetection.FaceDetector({
+        locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/face_detection/${file}`
+    });
+
+    faceDetector.setOptions({
+        model: 'short', // או 'full' אם תרצה דיוק גבוה יותר
+        minDetectionConfidence: 0.5
+    });
+
+    // העלאת תמונה
+    uploadInput.addEventListener('change', async (event) => {
         const file = event.target.files[0];
         if (file) {
             const reader = new FileReader();
-            reader.onload = (e) => {
-                imageData = e.target.result; // שמירת נתוני התמונה
-                preview.src = e.target.result; // הצגת התמונה
+            reader.onload = async (e) => {
+                preview.src = e.target.result;
                 preview.style.display = 'block';
+
+                const img = new Image();
+                img.src = e.target.result;
+                img.onload = async () => {
+                    const detections = await faceDetector.send({ image: img });
+                    if (detections.detections.length > 0) {
+                        const age = estimateAgeFromFace(detections.detections[0]);
+                        resultDiv.innerHTML = `<p>Your estimated age: ${age} years old</p>`;
+                    } else {
+                        alert('No face detected.');
+                    }
+                };
             };
             reader.readAsDataURL(file);
         }
     });
 
-    // שליחת נתונים לשרת
-    submitButton.addEventListener('click', () => {
-        const country = document.getElementById('country').value;
-        if (!imageData) {
-            alert('Please upload an image.');
-            return;
-        }
-        if (!country) {
-            alert('Please enter your childhood country.');
-            return;
-        }
-        fetch('/process', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ image: imageData, country })
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.error) {
-                alert(`Error: ${data.error}`);
-            } else {
-                resultDiv.innerHTML = `
-                <p>Your playlist is ready: <a href="${data.playlist}" target="_blank">Open Playlist</a></p>
-                <p>Your age is: ${data.age}</p>
-                `;
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('An error occurred. Please try again.');
-        });
-    });
+    // פונקציה לדוגמה כדי להעריך גיל (היא כרגע מדמה גיל, צריך לשפר את המודל)
+    function estimateAgeFromFace(face) {
+        // כאן תוכל להוסיף לוגיקה מתקדמת יותר עם TensorFlow.js
+        return Math.floor(Math.random() * 30) + 20; // גיל רנדומלי בין 20 ל-50
+    }
 });
