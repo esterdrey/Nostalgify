@@ -19,7 +19,11 @@ def home():
 # הגשת מודלים כסטטיים
 @app.route('/models/<path:filename>')
 def serve_models(filename):
-    return send_from_directory('../models', filename)
+    return send_from_directory('models', filename)
+# הגשת קבצים סטטיים
+@app.route('/static/<path:filename>')
+def serve_static(filename):
+    return send_from_directory('frontend', filename)
 
 @app.route('/process', methods=['POST'])
 def process_image():
