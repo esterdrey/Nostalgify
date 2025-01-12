@@ -16,6 +16,11 @@ def home():
     """ הצגת עמוד הבית - index.html"""
     return render_template('index.html')
 
+# הגשת מודלים כסטטיים
+@app.route('/models/<path:filename>')
+def serve_models(filename):
+    return send_from_directory('../models', filename)
+
 @app.route('/process', methods=['POST'])
 def process_image():
  

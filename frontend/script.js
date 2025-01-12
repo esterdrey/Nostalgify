@@ -31,6 +31,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         // ניתוח התמונה לגיל
         uploadInput.addEventListener('change', async (event) => {
+            let detectedAge = null;
             const file = event.target.files[0];
             const img = await faceapi.bufferToImage(file);
     
