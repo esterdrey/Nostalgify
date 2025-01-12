@@ -30,7 +30,6 @@ document.addEventListener('DOMContentLoaded', () => {
             alert('Please enter your childhood country.');
             return;
         }
-
         fetch('/process', {
             method: 'POST',
             headers: {
@@ -48,7 +47,7 @@ document.addEventListener('DOMContentLoaded', () => {
         })
         .catch(error => {
             console.error('Error:', error);
-            alert('An error occurred. Please try again later.');
+            alert('An error occurred. Please try again.');
         });
     });
 });
