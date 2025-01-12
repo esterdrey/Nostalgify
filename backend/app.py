@@ -7,7 +7,7 @@ from io import BytesIO
 from PIL import Image, UnidentifiedImageError
 
 # הגדרת Flask
-app = Flask(__name__, static_folder='../frontend/static', template_folder='../frontend')
+app = Flask(__name__, static_folder='../frontend', template_folder='../frontend')
 
 def predict_age(image_path):
     model = torch.hub.load('yu4u/age-gender-estimation', 'age_model', pretrained=True)
