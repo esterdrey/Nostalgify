@@ -4,10 +4,10 @@ import torch
 from torchvision import transforms
 from flask import Flask, render_template, send_from_directory, request, jsonify
 from io import BytesIO
-from PIL import Image
+from PIL import Image, UnidentifiedImageError
 
 # הגדרת Flask
-app = Flask(__name__, static_folder='../frontend', template_folder='../frontend')
+app = Flask(__name__, static_folder='../frontend/static', template_folder='../frontend')
 
 def predict_age(image_path):
     model = torch.hub.load('yu4u/age-gender-estimation', 'age_model', pretrained=True)
@@ -36,7 +36,6 @@ def home():
 
 @app.route('/process', methods=['POST'])
 def process_image():
- 
     try:
         # קבלת הנתונים מה-Frontend
         data = request.json
@@ -46,38 +45,34 @@ def process_image():
         image_data = data['image']
         country = data['country']
 
-        # והפרדת HEADER המרת התמונה לבינארי
-        header, encoded = image_data.split(",", 1)
-        image_binary = base64.b64decode(encoded)
+        # המרת התמונה לבינארי
+        try:
+            header, encoded = image_data.split(",", 1)
+            image_binary = base64.b64decode(encoded)
+            image = Image.open(BytesIO(image_binary))
+        except UnidentifiedImageError:
+            return jsonify({"error": "Invalid image format"}), 400
 
-        #יצירת אובייקט תמונה 
-        image = Image.open(BytesIO(image_binary))
-
-        # שמירת התמונה לקובץ זמני)
+        # שמירת התמונה לקובץ זמני
         temp_image_path = "temp_image.jpg"
         image.save(temp_image_path)
 
-        # ניתוח גיל 
+        # ניתוח גיל
         age = predict_age(temp_image_path)
 
         # ניקוי קובץ זמני
         os.remove(temp_image_path)
 
-        # החזרת הגיל כמספר בלבד
-        #return str(age)
-   
-
         # יצירת לינק לפלייליסט מותאם
         playlist_link = f"https://open.spotify.com/playlist/dummy_playlist_for_{country}_facecount_{age}"
         return jsonify({"playlist": playlist_link, "age": age})
 
-  
     except Exception as e:
-        return jsonify({"error": f"An error occurred : {str(e)}"}), 500
+        return jsonify({"error": f"An error occurred: {str(e)}"}), 500
 
 @app.route('/frontend/<path:filename>')
 def serve_static_files(filename):
-    return send_from_directory('../frontend', filename)
+    return send_from_directory('../frontend/static', filename)
 
 @app.after_request
 def add_header(response):
@@ -85,6 +80,5 @@ def add_header(response):
     return response
 
 if __name__ == '__main__':
-    # app.run(debug=True, host="0.0.0.0", port=5000) 
-    port = int(os.environ.get("PORT", 5000)) 
+    port = int(os.environ.get("PORT", 5000))
     app.run(debug=True, host="0.0.0.0", port=port)

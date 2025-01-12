@@ -30,6 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
             alert('Please enter your childhood country.');
             return;
         }
+
         fetch('/process', {
             method: 'POST',
             headers: {
@@ -37,12 +38,7 @@ document.addEventListener('DOMContentLoaded', () => {
             },
             body: JSON.stringify({ image: imageData, country })
         })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error(`Server error: ${response.status}`);
-            }
-            return response.json();
-        })
+        .then(response => response.json())
         .then(data => {
             if (data.error) {
                 alert(`Error: ${data.error}`);
@@ -52,7 +48,7 @@ document.addEventListener('DOMContentLoaded', () => {
         })
         .catch(error => {
             console.error('Error:', error);
-            alert('An error occurred. Please try again.');
+            alert('An error occurred. Please try again later.');
         });
     });
 });
