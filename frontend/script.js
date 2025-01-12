@@ -1,7 +1,12 @@
 document.addEventListener('DOMContentLoaded', async () => {
     // טוענים את המודל
-    await faceapi.nets.ageGenderNet.loadFromUri('/models');
+   try {
+    await faceapi.nets.ageGenderNet.loadFromUri('/models') ;
     await faceapi.nets.ssdMobilenetv1.loadFromUri('/models');
+    console.log("Models loaded successfully.");
+    } catch (error) {
+        console.error("Error loading models:", error);
+    }
 
     const uploadInput = document.getElementById('upload'); 
     const submitButton = document.getElementById('submit');
