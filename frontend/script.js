@@ -39,12 +39,12 @@ document.addEventListener('DOMContentLoaded', () => {
         })
         .then(response => response.json())
         .then(data => {
-            if (data.error) {
-                alert(`Error: ${data.error}`);
+            if (data.age.includes("Error")) {
+                resultDiv.innerHTML = `<p>Error: Unable to detect a face. Please upload a clear image with a visible face.</p>`;
             } else {
                 resultDiv.innerHTML = `
-                <p>Your playlist is ready: <a href="${data.playlist}" target="_blank">Open Playlist</a></p>
-                <p>Your age is: ${data.age}</p>
+                    <p>Your playlist is ready: <a href="${data.playlist}" target="_blank">Open Playlist</a></p>
+                    <p>Your age is: ${data.age}</p>
                 `;
             }
         })
