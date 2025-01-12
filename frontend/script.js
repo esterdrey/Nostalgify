@@ -42,7 +42,10 @@ document.addEventListener('DOMContentLoaded', () => {
             if (data.error) {
                 alert(`Error: ${data.error}`);
             } else {
-                resultDiv.innerHTML = `<p>Your playlist is ready: <a href="${data.playlist}" target="_blank">Open Playlist</a></p>`;
+                resultDiv.innerHTML = `
+                <p>Your playlist is ready: <a href="${data.playlist}" target="_blank">Open Playlist</a></p>
+                <p>Your age is: ${data.age}</p>
+                `;
             }
         })
         .catch(error => {
