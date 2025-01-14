@@ -12,6 +12,9 @@ document.addEventListener('DOMContentLoaded', () => {
         "uk_70s": "https://open.spotify.com/playlist/37i9dQZF1DWWEJlAGA9gs0"
     };
 
+    // טעינת Human.js
+    const human = new Human();
+
     // תצוגה מקדימה של התמונה
     uploadInput.addEventListener('change', (event) => {
         const file = event.target.files[0];
@@ -25,19 +28,38 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // חישוב העשור והצגת הפלייליסט
-    submitButton.addEventListener('click', () => {
+    // חישוב הגיל מהתמונה והצגת הפלייליסט
+    submitButton.addEventListener('click', async () => {
         const country = countryInput.value.trim().toLowerCase();
-        const age = 2025 - new Date().getFullYear() + 5;  // גיל משוער
+
+        if (!preview.src) {
+            alert('Please upload an image.');
+            return;
+        }
+
+        // זיהוי הגיל מהתמונה באמצעות Human.js
+        const img = new Image();
+        img.src = preview.src;
+        await img.decode();
+
+        const result = await human.detect(img);
+
+        if (result.face.length === 0) {
+            alert('No face detected. Please upload a clear image.');
+            return;
+        }
+
+        const age = Math.round(result.face[0].age);
         const decade = Math.floor(age / 10) * 10;
 
+        // חישוב הפלייליסט
         const key = `${country}_${decade}s`;
-        const playlistLink = playlists[key] || "https://open.spotify.com/playlist/37i9dQZF1DX4UtSsGT1Sbe";  // פלייליסט כללי
+        const playlistLink = playlists[key] || "https://open.spotify.com/playlist/37i9dQZF1DX4UtSsGT1Sbe";
 
+        // הצגת התוצאה
         resultDiv.innerHTML = `
-    <p>Your playlist: <a href="${playlistLink}" target="_blank">Open Playlist</a></p>
-    <p>Age detected: ${age}</p>
-    `;
-
+            <p>Your playlist: <a href="${playlistLink}" target="_blank">Open Playlist</a></p>
+            <p>Age detected: ${age}</p>
+        `;
     });
 });
