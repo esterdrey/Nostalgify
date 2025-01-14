@@ -6,7 +6,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     const countryInput = document.getElementById('country');
 
     // טעינת Human.js
-    const human = await human.load(); // טעינה של הספרייה
+    const human = new Human.Human();
+    await human.load();
 
     // תצוגה מקדימה של התמונה
     uploadInput.addEventListener('change', (event) => {
