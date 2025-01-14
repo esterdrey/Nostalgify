@@ -1,24 +1,58 @@
-const uploadInput = document.getElementById('upload');
-const submitButton = document.getElementById('submit');
-const resultDiv = document.getElementById('result');
+document.addEventListener('DOMContentLoaded', () => {
+    const uploadInput = document.getElementById('upload'); 
+    const submitButton = document.getElementById('submit');
+    const resultDiv = document.getElementById('result');
+    const preview = document.getElementById('preview');
+    let imageData = null;
 
-uploadInput.addEventListener('change', () => {
-    const file = uploadInput.files[0];
-    if (file) {
-        const formData = new FormData();
-        formData.append('file', file);
+    // העלאת תמונה קיימת
+    uploadInput.addEventListener('change', (event) => {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                imageData = e.target.result; // שמירת נתוני התמונה
+                preview.src = e.target.result; // הצגת התמונה
+                preview.style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+        }
+    });
 
-        fetch('/detect', {
+    // שליחת נתונים לשרת
+    submitButton.addEventListener('click', () => {
+        const country = document.getElementById('country').value;
+        if (!imageData) {
+            alert('Please upload an image.');
+            return;
+        }
+        if (!country) {
+            alert('Please enter your childhood country.');
+            return;
+        }
+        fetch('/process', {
             method: 'POST',
-            body: formData
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ image: imageData, country })
         })
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`Server error: ${response.status}`);
+            }
+            return response.json();
+        })
         .then(data => {
-            resultDiv.innerHTML = `<p>Faces detected: ${data.faces_detected}</p>`;
+            if (data.error) {
+                alert(`Error: ${data.error}`);
+            } else {
+                resultDiv.innerHTML = `<p>Your playlist is ready: <a href="${data.playlist}" target="_blank">Open Playlist</a></p>`;
+            }
         })
         .catch(error => {
             console.error('Error:', error);
-            resultDiv.innerHTML = `<p>Error: ${error}</p>`;
+            alert('An error occurred. Please try again.');
         });
-    }
+    });
 });
