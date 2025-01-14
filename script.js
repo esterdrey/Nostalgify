@@ -35,7 +35,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const playlistLink = playlists[key] || "https://open.spotify.com/playlist/37i9dQZF1DX4UtSsGT1Sbe";  // פלייליסט כללי
 
         resultDiv.innerHTML = `
-            <p>Your playlist: <a href="${playlistLink}" target="_blank">Open Playlist</a></p>
-        `;
+    <p>Your playlist: <a href="${playlistLink}" target="_blank">Open Playlist</a></p>
+    <p>Age detected: ${age}</p>
+    `;
+
     });
 });
