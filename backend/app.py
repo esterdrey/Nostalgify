@@ -50,6 +50,11 @@ def process_image():
 def serve_static_files(filename):
     return send_from_directory('../frontend', filename)
 
+# ראוט להגשת קבצים סטטיים (CSS, JS)
+@app.route("/<path:filename>")
+def serve_static_files(filename):
+    return send_from_directory("frontend", filename)
+
 @app.after_request
 def add_header(response):
     response.headers['Cache-Control'] = 'no-store'
