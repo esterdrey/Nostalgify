@@ -14,7 +14,7 @@ app = Flask(__name__, static_folder='frontend', template_folder='frontend')
 @app.route('/')
 def home():
     """ הצגת עמוד הבית - index.html """
-    return render_template('index.html')
+    return send_from_directory('frontend', 'index.html')
 
 # ראוט להגשת קבצים סטטיים (CSS, JS)
 @app.route("/<path:filename>")
