@@ -37,17 +37,15 @@ document.addEventListener('DOMContentLoaded', () => {
             },
             body: JSON.stringify({ image: imageData, country })
         })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error(`Server error: ${response.status}`);
-            }
-            return response.json();
-        })
+        .then(response => response.json())
         .then(data => {
             if (data.error) {
                 alert(`Error: ${data.error}`);
             } else {
-                resultDiv.innerHTML = `<p>Your playlist is ready: <a href="${data.playlist}" target="_blank">Open Playlist</a></p>`;
+                resultDiv.innerHTML = `
+                <p>Your playlist is ready: <a href="${data.playlist}" target="_blank">Open Playlist</a></p>
+                <p>Your age is: ${data.age}</p>
+                `;
             }
         })
         .catch(error => {

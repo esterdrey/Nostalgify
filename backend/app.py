@@ -1,6 +1,7 @@
 import base64
 import os
 import torch
+import requests
 from torchvision import transforms
 from flask import Flask, render_template, send_from_directory, request, jsonify
 from io import BytesIO
@@ -10,23 +11,19 @@ from PIL import Image
 app = Flask(__name__, static_folder='../frontend', template_folder='../frontend')
 
 def predict_age(image_path):
-    model = torch.hub.load('yu4u/age-gender-estimation', 'age_model', pretrained=True)
-    model.eval()
-
-    transform = transforms.Compose([
-        transforms.Resize((224, 224)),
-        transforms.ToTensor(),
-        transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
-    ])
-
-    image = Image.open(image_path).convert("RGB")
-    image_tensor = transform(image).unsqueeze(0)
-
-    with torch.no_grad():
-        output = model(image_tensor)
-        predicted_age = output.argmax().item()
-
-    return predicted_age
+    url = "https://api.deepai.org/api/demographic-recognition"
+    with open(image_path, 'rb') as image_file:
+        response = requests.post(
+            url,
+            files={'image': image_file},
+            headers={'api-key': '6e1b8fec-b405-41c6-813e-6a820e93f9f5'}
+        )
+    result = response.json()
+    try:
+        age = result['output']['faces'][0]['age']
+        return age
+    except (KeyError, IndexError):
+        return "Error: Unable to detect age."
 
 
 @app.route('/')
