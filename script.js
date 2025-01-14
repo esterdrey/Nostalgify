@@ -1,19 +1,12 @@
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
     const uploadInput = document.getElementById('upload');
     const preview = document.getElementById('preview');
     const submitButton = document.getElementById('submit');
     const resultDiv = document.getElementById('result');
     const countryInput = document.getElementById('country');
 
-    // מפת פלייליסטים לפי מדינה ועשור
-    const playlists = {
-        "israel_90s": "https://open.spotify.com/playlist/37i9dQZF1DX2FOC3lCipBy",
-        "usa_80s": "https://open.spotify.com/playlist/37i9dQZF1DX4UtSsGT1Sbe",
-        "uk_70s": "https://open.spotify.com/playlist/37i9dQZF1DWWEJlAGA9gs0"
-    };
-
     // טעינת Human.js
-    const human = new Human();
+    const human = await human.load(); // טעינה של הספרייה
 
     // תצוגה מקדימה של התמונה
     uploadInput.addEventListener('change', (event) => {
