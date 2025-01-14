@@ -8,26 +8,22 @@ from io import BytesIO
 from PIL import Image
 
 # הגדרת Flask
-app = Flask(__name__, static_folder='../frontend', template_folder='../frontend')
+app = Flask(__name__, static_folder='frontend', template_folder='frontend')
 
-
+# ראוט לדף הבית
 @app.route('/')
 def home():
-    """ הצגת עמוד הבית - index.html"""
+    """ הצגת עמוד הבית - index.html """
     return render_template('index.html')
 
-# הגשת מודלים כסטטיים
-@app.route('/models/<path:filename>')
-def serve_models(filename):
-    return send_from_directory('models', filename)
-# הגשת קבצים סטטיים
-@app.route('/static/<path:filename>')
-def serve_static(filename):
-    return send_from_directory('frontend', filename)
+# ראוט להגשת קבצים סטטיים (CSS, JS)
+@app.route("/<path:filename>")
+def serve_static_files(filename):
+    return send_from_directory("frontend", filename)
 
+# ראוט לעיבוד תמונה
 @app.route('/process', methods=['POST'])
 def process_image():
- 
     try:
         # קבלת הנתונים מה-Frontend
         data = request.json
@@ -37,30 +33,20 @@ def process_image():
         if not age or not country:
             return jsonify({"error": "Missing age or country in request"}), 400
 
-
         # יצירת לינק לפלייליסט מותאם
         playlist_link = f"https://open.spotify.com/playlist/dummy_playlist_for_{country}_facecount_{age}"
         return jsonify({"playlist": playlist_link, "age": age})
 
-  
     except Exception as e:
-        return jsonify({"error": f"An error occurred : {str(e)}"}), 500
+        return jsonify({"error": f"An error occurred: {str(e)}"}), 500
 
-@app.route('/frontend/<path:filename>')
-def serve_static_files(filename):
-    return send_from_directory('../frontend', filename)
-
-# ראוט להגשת קבצים סטטיים (CSS, JS)
-@app.route("/<path:filename>")
-def serve_static_files(filename):
-    return send_from_directory("frontend", filename)
-
+# הוספת Header למניעת Cache
 @app.after_request
 def add_header(response):
     response.headers['Cache-Control'] = 'no-store'
     return response
 
+# הרצת השרת
 if __name__ == '__main__':
-    # app.run(debug=True, host="0.0.0.0", port=5000) 
-    port = int(os.environ.get("PORT", 5000)) 
+    port = int(os.environ.get("PORT", 5000))
     app.run(debug=True, host="0.0.0.0", port=port)
