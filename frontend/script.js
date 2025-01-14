@@ -1,7 +1,8 @@
 async function loadModels() {
-    await faceapi.nets.ssdMobilenetv1.loadFromUri('/models');
-    await faceapi.nets.ageGenderNet.loadFromUri('/models');
-    await faceapi.nets.faceLandmark68Net.loadFromUri('/models');
+    await faceapi.nets.ssdMobilenetv1.loadFromUri('https://raw.githubusercontent.com/justadudewhohacks/face-api.js/master/weights');
+    await faceapi.nets.ageGenderNet.loadFromUri('https://raw.githubusercontent.com/justadudewhohacks/face-api.js/master/weights');
+    await faceapi.nets.faceLandmark68Net.loadFromUri('https://raw.githubusercontent.com/justadudewhohacks/face-api.js/master/weights');
+
     console.log("Models loaded successfully!");
 }
 
