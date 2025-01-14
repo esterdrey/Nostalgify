@@ -1,3 +1,4 @@
+let detectedAge = null;
 async function loadModels() {
     await faceapi.nets.ssdMobilenetv1.loadFromUri('https://raw.githubusercontent.com/justadudewhohacks/face-api.js/master/weights');
     await faceapi.nets.ageGenderNet.loadFromUri('https://raw.githubusercontent.com/justadudewhohacks/face-api.js/master/weights');
@@ -32,7 +33,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         // ניתוח התמונה לגיל
         uploadInput.addEventListener('change', async (event) => {
-            let detectedAge = null;
             const file = event.target.files[0];
             const img = await faceapi.bufferToImage(file);
     
