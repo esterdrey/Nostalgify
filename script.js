@@ -5,8 +5,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     const resultDiv = document.getElementById('result');
     const countryInput = document.getElementById('country');
 
-    // טעינת Human.js
-    const human = new Human.Human();
+    // טעינת Human.js עם הגדרה לטעינת המודלים מ-GitHub
+    const human = new Human.Human({
+        modelBasePath: 'https://raw.githubusercontent.com/vladmandic/human/main/models', // נתיב המודלים
+        backend: 'webgl', // שימוש ב-webgl במקום webgpu
+    });
     await human.load();
 
     // תצוגה מקדימה של התמונה
@@ -47,6 +50,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         const decade = Math.floor(age / 10) * 10;
 
         // חישוב הפלייליסט
+        const playlists = {
+            "israel_90s": "https://open.spotify.com/playlist/37i9dQZF1DX2FOC3lCipBy",
+            "usa_80s": "https://open.spotify.com/playlist/37i9dQZF1DX4UtSsGT1Sbe",
+            "uk_70s": "https://open.spotify.com/playlist/37i9dQZF1DWWEJlAGA9gs0"
+        };
         const key = `${country}_${decade}s`;
         const playlistLink = playlists[key] || "https://open.spotify.com/playlist/37i9dQZF1DX4UtSsGT1Sbe";
 
