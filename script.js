@@ -5,17 +5,16 @@ document.addEventListener('DOMContentLoaded', async () => {
     const resultDiv = document.getElementById('result');
     const countryInput = document.getElementById('country');
 
-    // טעינת Human.js עם הגדרה לטעינת המודלים מ-GitHub
     const human = new Human.Human({
         modelBasePath: 'https://raw.githubusercontent.com/vladmandic/human/main/models',
-        backend: 'webgl', // שימוש ב-webgl במקום webgpu
+        backend: 'webgl',
     });
     await human.load();
 
     // פונקציה לקבלת Access Token מ-Spotify
     async function getSpotifyAccessToken() {
-        const clientId = '9e5becb2c8764dada9b60a8f3b3855c6'; // הכניסי את ה-Client ID שלך
-        const clientSecret = 'b0de34c77ea64efa9cbf661f08b495e6'; // הכניסי את ה-Client Secret שלך
+        const clientId = '9e5becb2c8764dada9b60a8f3b3855c6';
+        const clientSecret = 'b0de34c77ea64efa9cbf661f08b495e6';
 
         const response = await fetch('https://accounts.spotify.com/api/token', {
             method: 'POST',
@@ -27,14 +26,14 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
 
         const data = await response.json();
-        return data.access_token; // מחזיר את ה-Access Token
+        return data.access_token;
     }
 
     // פונקציה לחיפוש פלייליסטים ב-Spotify
-    async function searchSpotifyPlaylists(query) {
+    async function searchSpotify(query, type = 'playlist', limit = 10) {
         const accessToken = await getSpotifyAccessToken();
 
-        const response = await fetch(`https://api.spotify.com/v1/search?q=${encodeURIComponent(query)}&type=playlist`, {
+        const response = await fetch(`https://api.spotify.com/v1/search?q=${encodeURIComponent(query)}&type=${type}&limit=${limit}`, {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${accessToken}`
@@ -42,7 +41,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
 
         const data = await response.json();
-        return data.playlists.items || []; // מחזיר את הפלייליסטים או מערך ריק אם אין תוצאות
+        return data.playlists.items || [];
     }
 
     // תצוגה מקדימה של התמונה
@@ -98,23 +97,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         resultDiv.innerHTML = `<p>Query: ${query}</p>`;
 
         // חיפוש פלייליסטים ב-Spotify
-        let playlists = await searchSpotifyPlaylists(query);
+        const playlists = await searchSpotify(query, 'playlist', 10);
 
-        // אם לא נמצאו פלייליסטים, fallback לחיפוש גלובלי
-        if (!playlists.length) {
-            const globalQuery = decade === 'kids' ? `kids music` : `${decade}s hits`;
-            console.log(`Global fallback query: ${globalQuery}`);
-            playlists = await searchSpotifyPlaylists(globalQuery);
-        }
-
-        // בחירת הפלייליסט הקרוב ביותר
-        let closestPlaylist = playlists[0];
-        if (playlists.length > 1) {
-            closestPlaylist = playlists.find(playlist =>
-                playlist.name && playlist.name.toLowerCase().includes(country) || 
-                (playlist.description && playlist.description.toLowerCase().includes(country))
-            ) || playlists[0];
-        }
+        // בחירת הפלייליסט הראשון
+        const closestPlaylist = playlists[0];
 
         // הצגת התוצאה
         if (closestPlaylist && closestPlaylist.external_urls && closestPlaylist.external_urls.spotify) {
