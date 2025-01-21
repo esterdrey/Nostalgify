@@ -1,60 +1,85 @@
-/* עיצוב הבסיס */
+/* בסיס */
 body {
     font-family: Arial, sans-serif;
+    text-align: center;
     margin: 0;
     padding: 0;
-    background-color: #f4f4f9;
-    color: #333;
-    text-align: center;
-}
-
-h1 {
-    color: #5c67f2;
-    margin-top: 20px;
+    background-color: #f7f7f7;
 }
 
 .container {
     max-width: 600px;
-    margin: 30px auto;
-    background: #ffffff;
+    margin: 0 auto;
     padding: 20px;
+    background: white;
     border-radius: 10px;
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-video, canvas {
-    width: 100%;
-    height: auto;
+h1 {
+    color: #333;
 }
 
-#preview {
-    margin-top: 20px;
-    width: 100%;
-    border: 2px solid #ddd;
-    border-radius: 10px;
-    display: none;
-}
-
-#capture, #submit {
-    background-color: #5c67f2;
-    color: #fff;
+button, input {
+    margin: 10px 0;
+    padding: 10px;
     border: none;
-    padding: 10px 20px;
     border-radius: 5px;
+    font-size: 16px;
+    width: 100%;
+    max-width: 300px;
     cursor: pointer;
-    margin: 10px;
+}
+
+button {
+    background-color: #007BFF;
+    color: white;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+input[type="file"] {
+    background-color: white;
+    cursor: pointer;
+}
+
+input[type="text"] {
+    border: 1px solid #ccc;
+    padding: 10px;
+    border-radius: 5px;
+    width: 100%;
+    max-width: 300px;
     font-size: 16px;
 }
 
-#capture:hover, #submit:hover {
-    background-color: #4951c3;
+.camera-container {
+    position: relative;
+    margin-bottom: 20px;
 }
 
-input[type="file"], input[type="text"] {
-    margin: 10px 0;
+video {
+    width: 100%;
+    max-width: 300px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    display: block;
+    margin: 0 auto;
+}
+
+select#country {
+    width: 100%;
+    max-width: 300px;
     padding: 10px;
+    font-size: 16px;
     border: 1px solid #ccc;
     border-radius: 5px;
-    width: calc(100% - 22px);
-    box-sizing: border-box;
+    margin-bottom: 10px;
+}
+
+select#country:focus {
+    outline: none;
+    border-color: #007BFF;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
 }
