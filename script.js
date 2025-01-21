@@ -111,7 +111,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         let closestPlaylist = playlists[0];
         if (playlists.length > 1) {
             closestPlaylist = playlists.find(playlist =>
-                playlist.name.toLowerCase().includes(country) || 
+                playlist.name && playlist.name.toLowerCase().includes(country) || 
                 (playlist.description && playlist.description.toLowerCase().includes(country))
             ) || playlists[0];
         }
