@@ -5,16 +5,17 @@ document.addEventListener('DOMContentLoaded', async () => {
     const resultDiv = document.getElementById('result');
     const countryInput = document.getElementById('country');
 
+    // טעינת Human.js עם הגדרה לטעינת המודלים מ-GitHub
     const human = new Human.Human({
-        modelBasePath: 'https://raw.githubusercontent.com/vladmandic/human/main/models',
-        backend: 'webgl',
+        modelBasePath: 'https://raw.githubusercontent.com/vladmandic/human/main/models', // נתיב המודלים
+        backend: 'webgl', // שימוש ב-webgl במקום webgpu
     });
     await human.load();
 
     // פונקציה לקבלת Access Token מ-Spotify
     async function getSpotifyAccessToken() {
-        const clientId = '9e5becb2c8764dada9b60a8f3b3855c6';
-        const clientSecret = 'b0de34c77ea64efa9cbf661f08b495e6';
+        const clientId = '9e5becb2c8764dada9b60a8f3b3855c6'; // הכניסי כאן את ה-Client ID שלך
+        const clientSecret = 'b0de34c77ea64efa9cbf661f08b495e6'; // הכניסי כאן את ה-Client Secret שלך
 
         const response = await fetch('https://accounts.spotify.com/api/token', {
             method: 'POST',
@@ -26,14 +27,14 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
 
         const data = await response.json();
-        return data.access_token;
+        return data.access_token; // מחזיר את ה-Access Token
     }
 
     // פונקציה לחיפוש פלייליסטים ב-Spotify
-    async function searchSpotify(query, type = 'playlist', limit = 10) {
+    async function searchSpotifyPlaylists(query) {
         const accessToken = await getSpotifyAccessToken();
 
-        const response = await fetch(`https://api.spotify.com/v1/search?q=${encodeURIComponent(query)}&type=${type}&limit=${limit}`, {
+        const response = await fetch(`https://api.spotify.com/v1/search?q=${encodeURIComponent(query)}&type=playlist`, {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${accessToken}`
@@ -41,7 +42,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
 
         const data = await response.json();
-        return data.playlists.items || [];
+        return data.playlists.items; // מחזיר את הפלייליסטים
     }
 
     // תצוגה מקדימה של התמונה
@@ -85,31 +86,26 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (age < 10) {
             decade = 'kids'; // קטגוריה מיוחדת לילדים מתחת לגיל 10
         } else {
-            const currentYear = new Date().getFullYear();
-            const yearWhenTen = currentYear - age + 10;
-            decade = Math.floor(yearWhenTen / 10) * 10;
+            const currentYear = new Date().getFullYear(); // שנת היום הנוכחית
+            const yearWhenTen = currentYear - age + 10; // השנה שבה היה בן 10
+            decade = Math.floor(yearWhenTen / 10) * 10; // העשור שבו היה בן 10
         }
 
         // יצירת מחרוזת החיפוש ל-Spotify
-        const query = decade === 'kids' ? `kids music` : `${country} ${decade}s hits`;
-
-        console.log(`Search query: ${query}`);
-        resultDiv.innerHTML = `<p>Query: ${query}</p>`;
+        const query = decade === 'kids' ? `${country} kids music` : `${country} ${decade}s hits`;
 
         // חיפוש פלייליסטים ב-Spotify
-        const playlists = await searchSpotify(query, 'playlist', 10);
+        const playlists = await searchSpotifyPlaylists(query);
 
-        // בחירת הפלייליסט הראשון
-        const closestPlaylist = playlists[0];
-
-        // הצגת התוצאה
-        if (closestPlaylist && closestPlaylist.external_urls && closestPlaylist.external_urls.spotify) {
+        // הצגת הפלייליסט הראשון בתוצאה
+        if (playlists.length > 0) {
+            const playlist = playlists[0]; // הפלייליסט הראשון
             resultDiv.innerHTML = `
-                <p>Your playlist: <a href="${closestPlaylist.external_urls.spotify}" target="_blank">${closestPlaylist.name}</a></p>
+                <p>Your playlist: <a href="${playlist.external_urls.spotify}" target="_blank">${playlist.name}</a></p>
                 <p>Age detected: ${age}</p>
             `;
         } else {
-            resultDiv.innerHTML = '<p>No playlists found, please try again later!</p>';
+            resultDiv.innerHTML = '<p>No playlists found!</p>';
         }
     });
 });
