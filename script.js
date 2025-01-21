@@ -12,6 +12,39 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
     await human.load();
 
+    // פונקציה לקבלת Access Token מ-Spotify
+    async function getSpotifyAccessToken() {
+        const clientId = 'YOUR_CLIENT_ID'; // הכניסי כאן את ה-Client ID שלך
+        const clientSecret = 'YOUR_CLIENT_SECRET'; // הכניסי כאן את ה-Client Secret שלך
+
+        const response = await fetch('https://accounts.spotify.com/api/token', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'Authorization': 'Basic ' + btoa(clientId + ':' + clientSecret)
+            },
+            body: 'grant_type=client_credentials'
+        });
+
+        const data = await response.json();
+        return data.access_token; // מחזיר את ה-Access Token
+    }
+
+    // פונקציה לחיפוש פלייליסטים ב-Spotify
+    async function searchSpotifyPlaylists(query) {
+        const accessToken = await getSpotifyAccessToken();
+
+        const response = await fetch(`https://api.spotify.com/v1/search?q=${encodeURIComponent(query)}&type=playlist`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${accessToken}`
+            }
+        });
+
+        const data = await response.json();
+        return data.playlists.items; // מחזיר את הפלייליסטים
+    }
+
     // תצוגה מקדימה של התמונה
     uploadInput.addEventListener('change', (event) => {
         const file = event.target.files[0];
@@ -49,19 +82,21 @@ document.addEventListener('DOMContentLoaded', async () => {
         const age = Math.round(result.face[0].age);
         const decade = Math.floor(age / 10) * 10;
 
-        // חישוב הפלייליסט
-        const playlists = {
-            "israel_90s": "https://open.spotify.com/playlist/37i9dQZF1DX2FOC3lCipBy",
-            "usa_80s": "https://open.spotify.com/playlist/37i9dQZF1DX4UtSsGT1Sbe",
-            "uk_70s": "https://open.spotify.com/playlist/37i9dQZF1DWWEJlAGA9gs0"
-        };
-        const key = `${country}_${decade}s`;
-        const playlistLink = playlists[key] || "https://open.spotify.com/playlist/37i9dQZF1DX4UtSsGT1Sbe";
+        // יצירת מחרוזת החיפוש ל-Spotify
+        const query = `${country} ${decade}s hits`;
 
-        // הצגת התוצאה
-        resultDiv.innerHTML = `
-            <p>Your playlist: <a href="${playlistLink}" target="_blank">Open Playlist</a></p>
-            <p>Age detected: ${age}</p>
-        `;
+        // חיפוש פלייליסטים ב-Spotify
+        const playlists = await searchSpotifyPlaylists(query);
+
+        // הצגת הפלייליסט הראשון בתוצאה
+        if (playlists.length > 0) {
+            const playlist = playlists[0]; // הפלייליסט הראשון
+            resultDiv.innerHTML = `
+                <p>Your playlist: <a href="${playlist.external_urls.spotify}" target="_blank">${playlist.name}</a></p>
+                <p>Age detected: ${age}</p>
+            `;
+        } else {
+            resultDiv.innerHTML = '<p>No playlists found!</p>';
+        }
     });
 });
