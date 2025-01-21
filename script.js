@@ -24,7 +24,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         "India",
         "Indonesia",
         "Ireland",
-        "Israel",
+        "ישראל",
         "Italy",
         "Japan",
         "Malaysia",
