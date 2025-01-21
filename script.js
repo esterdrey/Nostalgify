@@ -14,8 +14,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // פונקציה לקבלת Access Token מ-Spotify
     async function getSpotifyAccessToken() {
-        const clientId = 'YOUR_CLIENT_ID'; // הכניסי כאן את ה-Client ID שלך
-        const clientSecret = 'YOUR_CLIENT_SECRET'; // הכניסי כאן את ה-Client Secret שלך
+        const clientId = '9e5becb2c8764dada9b60a8f3b3855c6'; // הכניסי כאן את ה-Client ID שלך
+        const clientSecret = 'b0de34c77ea64efa9cbf661f08b495e6'; // הכניסי כאן את ה-Client Secret שלך
 
         const response = await fetch('https://accounts.spotify.com/api/token', {
             method: 'POST',
@@ -80,10 +80,19 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
         const age = Math.round(result.face[0].age);
-        const decade = Math.floor(age / 10) * 10;
+
+        // חישוב העשור שבו האדם היה בן 10
+        let decade;
+        if (age < 10) {
+            decade = 'kids'; // קטגוריה מיוחדת לילדים מתחת לגיל 10
+        } else {
+            const currentYear = new Date().getFullYear(); // שנת היום הנוכחית
+            const yearWhenTen = currentYear - age + 10; // השנה שבה היה בן 10
+            decade = Math.floor(yearWhenTen / 10) * 10; // העשור שבו היה בן 10
+        }
 
         // יצירת מחרוזת החיפוש ל-Spotify
-        const query = `${country} ${decade}s hits`;
+        const query = decade === 'kids' ? `${country} kids music` : `${country} ${decade}s hits`;
 
         // חיפוש פלייליסטים ב-Spotify
         const playlists = await searchSpotifyPlaylists(query);
