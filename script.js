@@ -106,12 +106,13 @@ document.addEventListener('DOMContentLoaded', async () => {
             `;
         } else {
             // יצירת מחרוזת החיפוש ל-Spotify
-            query = decade === 'kids' ? ` kids music` : ` ${decade}`;
+            const dummy_query = decade === 'kids' ? ` kids music` : ` ${decade}`;
 
             // חיפוש פלייליסטים ב-Spotify
-            playlists = await searchSpotifyPlaylists(query);
+            const dummy_playlists = await searchSpotifyPlaylists(dummy_query);
+            const dummy_playlist = dummy_playlists[0]; // הפלייליסט הראשון
             resultDiv.innerHTML = `
-                <p>No playlists found for your country, so enjoy global nostalgic hits: <a href="${playlist.external_urls.spotify}" target="_blank">${playlist.name}</a></p>
+                <p>No playlists found for your country, so enjoy global nostalgic hits: <a href="${dummy_playlist.external_urls.spotify}" target="_blank">${playlist.name}</a></p>
                 <p>Age detected: ${age}</p>
             `;
         }
