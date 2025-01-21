@@ -112,7 +112,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 <p>Age detected: ${age}</p>
             `;
         } else {
-            resultDiv.innerHTML = '<p>No playlists found, please try again later!</p>';
+          //  resultDiv.innerHTML = '<p>No playlists found, please try again later!</p>';
         }
     });
 });
