@@ -1,85 +1,105 @@
-/* בסיס */
+/* עיצוב בסיס */
 body {
-    font-family: Arial, sans-serif;
-    text-align: center;
+    font-family: 'Arial', sans-serif; /* או 'Circular', אם יש */
     margin: 0;
     padding: 0;
-    background-color: #f7f7f7;
+    background-color: #121212; /* רקע כהה */
+    color: #FFFFFF; /* טקסט לבן */
+    text-align: center;
 }
 
+/* כותרת */
+h1 {
+    font-size: 5rem; /* כותרת גדולה */
+    font-family: 'Dancing Script', cursive; /* פונט מסולסל וקליל */
+    color: #1DB954; /* ירוק Spotify */
+    margin-top: 20px;
+    font-weight: 500; /* משקל בינוני */
+    text-transform: none; /* שומר על אותיות כמו ב-HTML */
+    text-shadow: 
+        2px 2px 0px #000, /* שכבת צל ראשונה */
+        4px 4px 0px rgba(0, 0, 0, 0.7), /* שכבת צל שנייה */
+        6px 6px 0px rgba(0, 0, 0, 0.5); /* שכבת צל שלישית */
+}
+
+
+
+/* מכולה */
 .container {
     max-width: 600px;
-    margin: 0 auto;
+    margin: 30px auto;
+    background: #181818; /* אפור כהה */
     padding: 20px;
-    background: white;
     border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5); /* עומק קל */
 }
 
-h1 {
-    color: #333;
+/* אלמנטים כמו וידאו ותמונות */
+video, canvas, img {
+    width: 100%;
+    height: auto;
+    border-radius: 10px;
+    border: 2px solid #333333; /* מסגרת דקה */
 }
 
-button, input {
+/* שדות קלט */
+input[type="file"], input[type="text"], select {
     margin: 10px 0;
     padding: 10px;
-    border: none;
+    border: 1px solid #333333;
     border-radius: 5px;
+    background-color: #242424; /* רקע כהה */
+    color: #FFFFFF;
     font-size: 16px;
-    width: 100%;
-    max-width: 300px;
-    cursor: pointer;
+    width: calc(100% - 22px);
+    box-sizing: border-box;
 }
 
+/* עיצוב כפתורים */
 button {
-    background-color: #007BFF;
-    color: white;
+    background-color: #1DB954; /* ירוק Spotify */
+    color: #FFFFFF;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 50px; /* עיגול מלא */
+    cursor: pointer;
+    font-size: 16px;
+    margin: 10px;
+    transition: background-color 0.3s ease;
 }
 
 button:hover {
-    background-color: #0056b3;
+    background-color: #1ED760; /* ירוק בהיר יותר */
 }
 
-input[type="file"] {
-    background-color: white;
-    cursor: pointer;
+/* עיצוב תוצאה */
+#result {
+    margin-top: 20px;
+    color: #B3B3B3; /* טקסט משני */
+    font-size: 1rem;
 }
 
-input[type="text"] {
-    border: 1px solid #ccc;
-    padding: 10px;
-    border-radius: 5px;
-    width: 100%;
-    max-width: 300px;
-    font-size: 16px;
-}
-
-.camera-container {
-    position: relative;
-    margin-bottom: 20px;
-}
-
-video {
-    width: 100%;
-    max-width: 300px;
-    border: 1px solid #ccc;
+/* תצוגה מקדימה */
+#preview {
+    margin-top: 20px;
+    display: none; /* ברירת מחדל מוסתר */
+    border: 2px solid #1DB954; /* מסגרת ירוקה */
     border-radius: 10px;
-    display: block;
-    margin: 0 auto;
 }
 
+/* עיצוב הרשימה הנפתחת */
 select#country {
-    width: 100%;
-    max-width: 300px;
     padding: 10px;
-    font-size: 16px;
-    border: 1px solid #ccc;
+    border: 1px solid #333333;
     border-radius: 5px;
-    margin-bottom: 10px;
+    background-color: #242424;
+    color: #FFFFFF;
+    font-size: 16px;
+    width: calc(100% - 22px);
 }
 
 select#country:focus {
     outline: none;
-    border-color: #007BFF;
-    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+    border-color: #1DB954; /* מסגרת ירוקה */
+    box-shadow: 0 0 5px rgba(29, 185, 84, 0.5); /* הבלטה */
 }
