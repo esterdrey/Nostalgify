@@ -7,8 +7,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // טעינת Human.js עם הגדרה לטעינת המודלים מ-GitHub
     const human = new Human.Human({
-        modelBasePath: 'https://raw.githubusercontent.com/vladmandic/human/main/models', // נתיב המודלים
-        backend: 'webgl', // שימוש ב-webgl במקום webgpu
+        modelBasePath: 'https://raw.githubusercontent.com/vladmandic/human/main/models',
+        backend: 'webgl',
     });
     await human.load();
 
@@ -24,6 +24,52 @@ document.addEventListener('DOMContentLoaded', async () => {
             reader.readAsDataURL(file);
         }
     });
+
+    // קבלת Access Token מ-Spotify
+    async function getAccessToken(9e5becb2c8764dada9b60a8f3b3855c6, b0de34c77ea64efa9cbf661f08b495e6) {
+        const url = 'https://accounts.spotify.com/api/token';
+        const credentials = btoa(`${clientId}:${clientSecret}`); // קידוד Base64
+
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Basic ${credentials}`,
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: 'grant_type=client_credentials',
+        });
+
+        if (!response.ok) {
+            throw new Error(`Failed to fetch access token: ${response.status}`);
+        }
+
+        const data = await response.json();
+        return data.access_token; // מחזיר את ה-Access Token
+    }
+
+    // חיפוש פלייליסט ציבורי לפי שאילתה
+    async function searchPublicPlaylist(query, accessToken) {
+        const url = `https://api.spotify.com/v1/search?q=${encodeURIComponent(query)}&type=playlist&limit=1`;
+
+        const response = await fetch(url, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${accessToken}`,
+            },
+        });
+
+        if (!response.ok) {
+            throw new Error(`Spotify API error: ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        if (data.playlists.items.length === 0) {
+            throw new Error(`No playlists found for query: ${query}`);
+        }
+
+        return data.playlists.items[0].external_urls.spotify; // מחזיר קישור לפלייליסט
+    }
 
     // חישוב הגיל מהתמונה והצגת הפלייליסט
     submitButton.addEventListener('click', async () => {
@@ -49,9 +95,18 @@ document.addEventListener('DOMContentLoaded', async () => {
         const age = Math.round(result.face[0].age);
         const decade = Math.floor(age / 10) * 10;
 
-        // יצירת פלייליסט באמצעות Spotify API
+        // קבלת Access Token ובקשה ל-Spotify API
+        const clientId = 'YOUR_CLIENT_ID'; // הכנס את ה-Client ID שלך
+        const clientSecret = 'YOUR_CLIENT_SECRET'; // הכנס את ה-Client Secret שלך
+
         try {
-            const playlistLink = await getSpotifyPlaylist(country, decade);
+            const accessToken = await getAccessToken(clientId, clientSecret);
+
+            // יצירת שאילתה על סמך המדינה והעשור
+            const query = `${country} ${decade}s`;
+            const playlistLink = await searchPublicPlaylist(query, accessToken);
+
+            // הצגת התוצאה
             resultDiv.innerHTML = `
                 <p>Your playlist: <a href="${playlistLink}" target="_blank">Open Playlist</a></p>
                 <p>Age detected: ${age}</p>
@@ -62,31 +117,3 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     });
 });
-
-// פונקציה ליצירת בקשת פלייליסט ל-Spotify API
-async function getSpotifyPlaylist(country, decade) {
-    const SPOTIFY_TOKEN = 'YOUR_SPOTIFY_ACCESS_TOKEN'; // הכנס את ה-Access Token שלך כאן
-
-    // יצירת שאילתה על סמך עשור ומדינה
-    const query = `${country} ${decade}s`;
-    const url = `https://api.spotify.com/v1/search?q=${encodeURIComponent(query)}&type=playlist&limit=1`;
-
-    const response = await fetch(url, {
-        method: 'GET',
-        headers: {
-            'Authorization': `Bearer ${SPOTIFY_TOKEN}`
-        }
-    });
-
-    if (!response.ok) {
-        throw new Error('Spotify API error: ' + response.status);
-    }
-
-    const data = await response.json();
-
-    if (data.playlists.items.length === 0) {
-        throw new Error('No playlists found for query: ' + query);
-    }
-
-    return data.playlists.items[0].external_urls.spotify; // קישור לפלייליסט
-}
