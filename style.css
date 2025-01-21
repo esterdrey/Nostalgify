@@ -75,7 +75,7 @@ button:hover {
 /* עיצוב תוצאה */
 #result {
     margin-top: 20px;
-    color: #B3B3B3; /* טקסט משני */
+    color: #FFFFFF; /* טקסט משני */
     font-size: 1rem;
 }
 
@@ -103,3 +103,14 @@ select#country:focus {
     border-color: #1DB954; /* מסגרת ירוקה */
     box-shadow: 0 0 5px rgba(29, 185, 84, 0.5); /* הבלטה */
 }
+
+/* עיצוב הלינק בתוצאה */
+#result a {
+    color: #1DB954; /* צבע הירוק של Spotify */
+    text-decoration: none; /* מסיר את הקו תחתון */
+}
+
+#result a:hover {
+    color: #1ED760; /* ירוק בהיר יותר כשעוברים עם העכבר */
+}
+
