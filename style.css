@@ -1,12 +1,28 @@
-/* עיצוב בסיס */
+/* רקע לדף כולו */
 body {
-    font-family: 'Arial', sans-serif; /* או 'Circular', אם יש */
     margin: 0;
     padding: 0;
-    background-color: #121212; /* רקע כהה */
+    background: url('background.png') center/cover no-repeat; /* הוספת התמונה כרקע */
+    background-size: cover; /* התמונה תכסה את כל הדף */
+    background-position: center; /* התמונה ממורכזת */
+    font-family: 'Arial', sans-serif;
     color: #FFFFFF; /* טקסט לבן */
-    text-align: center;
+    position: relative;
+    height: 100vh; /* מבטיח שהגוף יתפוס את כל גובה הדף */
 }
+
+/* אוברליי טשטוש כהה על כל הרקע */
+body::before {
+    content: '';
+    position: fixed; /* מציב את ה-overlay על כל המסך */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7); /* טשטוש כהה יותר */
+    z-index: -1; /* מוודא שה-overlay יהיה מאחורי התוכן */
+}
+
 
 /* כותרת */
 h1 {
