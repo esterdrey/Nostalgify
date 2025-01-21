@@ -94,20 +94,32 @@ document.addEventListener('DOMContentLoaded', async () => {
         // יצירת מחרוזת החיפוש ל-Spotify
         const query = decade === 'kids' ? `kids music` : `${country} ${decade}s hits`;
 
+        console.log(`Search query: ${query}`);
+        resultDiv.innerHTML = `<p>Query: ${query}</p>`;
+
         // חיפוש פלייליסטים ב-Spotify
         let playlists = await searchSpotifyPlaylists(query);
 
-        // אם לא נמצאו פלייליסטים, חיפוש גלובלי
+        // אם לא נמצאו פלייליסטים, fallback לחיפוש גלובלי
         if (!playlists.length) {
             const globalQuery = decade === 'kids' ? `kids music` : `${decade}s hits`;
+            console.log(`Global fallback query: ${globalQuery}`);
             playlists = await searchSpotifyPlaylists(globalQuery);
         }
 
-        // הצגת הפלייליסט הראשון בתוצאה
-        if (playlists.length > 0 && playlists[0] && playlists[0].external_urls && playlists[0].external_urls.spotify) {
-            const playlist = playlists[0];
+        // בחירת הפלייליסט הקרוב ביותר
+        let closestPlaylist = playlists[0];
+        if (playlists.length > 1) {
+            closestPlaylist = playlists.find(playlist =>
+                playlist.name.toLowerCase().includes(country) || 
+                (playlist.description && playlist.description.toLowerCase().includes(country))
+            ) || playlists[0];
+        }
+
+        // הצגת התוצאה
+        if (closestPlaylist && closestPlaylist.external_urls && closestPlaylist.external_urls.spotify) {
             resultDiv.innerHTML = `
-                <p>Your playlist: <a href="${playlist.external_urls.spotify}" target="_blank">${playlist.name}</a></p>
+                <p>Your playlist: <a href="${closestPlaylist.external_urls.spotify}" target="_blank">${closestPlaylist.name}</a></p>
                 <p>Age detected: ${age}</p>
             `;
         } else {
