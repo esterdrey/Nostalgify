@@ -19,13 +19,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     }
 
-    // סינון רשימת המדינות
-    countrySelect.addEventListener('input', () => {
-        const search = countrySelect.value.toLowerCase();
-        [...countrySelect.options].forEach(option => {
-            option.style.display = option.textContent.toLowerCase().includes(search) ? 'block' : 'none';
-        });
+    countrySelect.addEventListener('change', () => {
+        const selectedCountry = countrySelect.value;
+        console.log(`Selected country: ${selectedCountry}`); // רק לאבחון
     });
+    
 
     // תצוגה מקדימה של התמונה
     uploadInput.addEventListener('change', (event) => {
