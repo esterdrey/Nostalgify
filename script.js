@@ -93,7 +93,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         // יצירת מחרוזת החיפוש ל-Spotify
         const query = decade === 'kids' ? `kids music` : `${country} ${decade}s hits`;
-        <p>Age detected: ${query}</p>
+        resultDiv.innerHTML = <p> ${query}</p>;
 
         // חיפוש פלייליסטים ב-Spotify
         let playlists = await searchSpotifyPlaylists(query);
