@@ -3,8 +3,61 @@ document.addEventListener('DOMContentLoaded', async () => {
     const preview = document.getElementById('preview');
     const submitButton = document.getElementById('submit');
     const resultDiv = document.getElementById('result');
-    const countryInput = document.getElementById('country');
+    const countrySelect = document.getElementById('country');
+    let imageUploaded = false;
 
+    // רשימת מדינות
+    const countries = ["United States", "Canada", "United Kingdom", "Israel", "France", "Germany", "Australia"];
+
+    // אתחול קומבובוקס
+    function populateCountrySelect() {
+        countries.forEach((country) => {
+            const option = document.createElement('option');
+            option.value = country.toLowerCase();
+            option.textContent = country;
+            countrySelect.appendChild(option);
+        });
+    }
+
+    // הפיכת הכפתור ללא לחיץ
+    function toggleSubmitButton() {
+        const countrySelected = countrySelect.value.trim() !== "";
+        submitButton.disabled = !(imageUploaded && countrySelected);
+    }
+
+    // סינון רשימת המדינות
+    countrySelect.addEventListener('input', () => {
+        const search = countrySelect.value.toLowerCase();
+        [...countrySelect.options].forEach(option => {
+            option.style.display = option.textContent.toLowerCase().includes(search) ? 'block' : 'none';
+        });
+    });
+
+    // תצוגה מקדימה של התמונה
+    uploadInput.addEventListener('change', (event) => {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                preview.src = e.target.result;
+                preview.style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+            imageUploaded = true;
+            toggleSubmitButton();
+        }
+    });
+
+    // בחירת מדינה
+    countrySelect.addEventListener('change', () => {
+        toggleSubmitButton();
+    });
+
+    // אתחול הקומבובוקס
+    populateCountrySelect();
+    toggleSubmitButton();
+
+    // המשך הקוד המקורי ללא שינוי
     // טעינת Human.js עם הגדרה לטעינת המודלים מ-GitHub
     const human = new Human.Human({
         modelBasePath: 'https://raw.githubusercontent.com/vladmandic/human/main/models', // נתיב המודלים
@@ -45,22 +98,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         return data.playlists.items; // מחזיר את הפלייליסטים
     }
 
-    // תצוגה מקדימה של התמונה
-    uploadInput.addEventListener('change', (event) => {
-        const file = event.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                preview.src = e.target.result;
-                preview.style.display = 'block';
-            };
-            reader.readAsDataURL(file);
-        }
-    });
-
     // חישוב הגיל מהתמונה והצגת הפלייליסט
     submitButton.addEventListener('click', async () => {
-        const country = countryInput.value.trim().toLowerCase();
+        const country = countrySelect.value.trim().toLowerCase();
 
         if (!preview.src) {
             alert('Please upload an image.');
@@ -105,14 +145,11 @@ document.addEventListener('DOMContentLoaded', async () => {
                 <p>Age detected: ${age}</p>
             `;
         } else {
-            // יצירת מחרוזת החיפוש ל-Spotify
-            const dummy_query = decade === 'kids' ? ` kids music` : ` ${decade}`;
-
-            // חיפוש פלייליסטים ב-Spotify
+            const dummy_query = decade === 'kids' ? `kids music` : `${decade}`;
             const dummy_playlists = await searchSpotifyPlaylists(dummy_query);
             const dummy_playlist = dummy_playlists[0]; // הפלייליסט הראשון
             resultDiv.innerHTML = `
-                <p>No playlists found for your country, so enjoy global nostalgic hits: <a href="${dummy_playlist.external_urls.spotify}" target="_blank">${playlist.name}</a></p>
+                <p>No playlists found for your country, so enjoy global nostalgic hits: <a href="${dummy_playlist.external_urls.spotify}" target="_blank">${dummy_playlist.name}</a></p>
                 <p>Age detected: ${age}</p>
             `;
         }
