@@ -12,39 +12,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
     await human.load();
 
-    // פונקציה לקבלת Access Token מ-Spotify
-    async function getSpotifyAccessToken() {
-        const clientId = '9e5becb2c8764dada9b60a8f3b3855c6'; // הכניסי כאן את ה-Client ID שלך
-        const clientSecret = 'b0de34c77ea64efa9cbf661f08b495e6'; // הכניסי כאן את ה-Client Secret שלך
-
-        const response = await fetch('https://accounts.spotify.com/api/token', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-                'Authorization': 'Basic ' + btoa(clientId + ':' + clientSecret)
-            },
-            body: 'grant_type=client_credentials'
-        });
-
-        const data = await response.json();
-        return data.access_token; // מחזיר את ה-Access Token
-    }
-
-    // פונקציה לחיפוש פלייליסטים ב-Spotify
-    async function searchSpotifyPlaylists(query) {
-        const accessToken = await getSpotifyAccessToken();
-
-        const response = await fetch(`https://api.spotify.com/v1/search?q=${encodeURIComponent(query)}&type=playlist`, {
-            method: 'GET',
-            headers: {
-                'Authorization': `Bearer ${accessToken}`
-            }
-        });
-
-        const data = await response.json();
-        return data.playlists.items; // מחזיר את הפלייליסטים
-    }
-
     // תצוגה מקדימה של התמונה
     uploadInput.addEventListener('change', (event) => {
         const file = event.target.files[0];
@@ -80,32 +47,46 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
         const age = Math.round(result.face[0].age);
+        const decade = Math.floor(age / 10) * 10;
 
-        // חישוב העשור שבו האדם היה בן 10
-        let decade;
-        if (age < 10) {
-            decade = 'kids'; // קטגוריה מיוחדת לילדים מתחת לגיל 10
-        } else {
-            const currentYear = new Date().getFullYear(); // שנת היום הנוכחית
-            const yearWhenTen = currentYear - age + 10; // השנה שבה היה בן 10
-            decade = Math.floor(yearWhenTen / 10) * 10; // העשור שבו היה בן 10
-        }
-
-        // יצירת מחרוזת החיפוש ל-Spotify
-        const query = decade === 'kids' ? `${country} kids music` : `${country} ${decade}s hits`;
-
-        // חיפוש פלייליסטים ב-Spotify
-        const playlists = await searchSpotifyPlaylists(query);
-
-        // הצגת הפלייליסט הראשון בתוצאה
-        if (playlists.length > 0) {
-            const playlist = playlists[0]; // הפלייליסט הראשון
+        // יצירת פלייליסט באמצעות Spotify API
+        try {
+            const playlistLink = await getSpotifyPlaylist(country, decade);
             resultDiv.innerHTML = `
-                <p>Your playlist: <a href="${playlist.external_urls.spotify}" target="_blank">${playlist.name}</a></p>
+                <p>Your playlist: <a href="${playlistLink}" target="_blank">Open Playlist</a></p>
                 <p>Age detected: ${age}</p>
             `;
-        } else {
-            resultDiv.innerHTML = '<p>No playlists found!</p>';
+        } catch (error) {
+            console.error('Error fetching playlist:', error);
+            resultDiv.innerHTML = `<p>Failed to fetch playlist. Please try again later.</p>`;
         }
     });
 });
+
+// פונקציה ליצירת בקשת פלייליסט ל-Spotify API
+async function getSpotifyPlaylist(country, decade) {
+    const SPOTIFY_TOKEN = 'YOUR_SPOTIFY_ACCESS_TOKEN'; // הכנס את ה-Access Token שלך כאן
+
+    // יצירת שאילתה על סמך עשור ומדינה
+    const query = `${country} ${decade}s`;
+    const url = `https://api.spotify.com/v1/search?q=${encodeURIComponent(query)}&type=playlist&limit=1`;
+
+    const response = await fetch(url, {
+        method: 'GET',
+        headers: {
+            'Authorization': `Bearer ${SPOTIFY_TOKEN}`
+        }
+    });
+
+    if (!response.ok) {
+        throw new Error('Spotify API error: ' + response.status);
+    }
+
+    const data = await response.json();
+
+    if (data.playlists.items.length === 0) {
+        throw new Error('No playlists found for query: ' + query);
+    }
+
+    return data.playlists.items[0].external_urls.spotify; // קישור לפלייליסט
+}
