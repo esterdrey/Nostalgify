@@ -1,109 +1,106 @@
-/* רקע לדף כולו */
+/* Background for the entire page */
 body {
     margin: 0;
     padding: 0;
-    background: url('background.png') center/cover no-repeat; /* הוספת התמונה כרקע */
-    background-size: cover; /* התמונה תכסה את כל הדף */
-    background-position: center; /* התמונה ממורכזת */
+    background: url('background.png') center/cover no-repeat; /* Adds the image as background */
+    background-size: cover; /* Ensures the image covers the whole page */
+    background-position: center; /* Centers the image */
     font-family: 'Arial', sans-serif;
-    color: #FFFFFF; /* טקסט לבן */
+    color: #FFFFFF; /* White text */
     position: relative;
-    height: 100vh; /* מבטיח שהגוף יתפוס את כל גובה הדף */
+    height: 100vh; /* Ensures the body takes up the full height of the page */
 }
 
-/* אוברליי טשטוש כהה על כל הרקע */
+/* Dark overlay blur effect on the entire background */
 body::before {
     content: '';
-    position: fixed; /* מציב את ה-overlay על כל המסך */
+    position: fixed; /* Positions the overlay across the whole screen */
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.7); /* טשטוש כהה יותר */
-    z-index: -1; /* מוודא שה-overlay יהיה מאחורי התוכן */
+    background: rgba(0, 0, 0, 0.7); /* Darker blur effect */
+    z-index: -1; /* Ensures the overlay is behind the content */
 }
 
-
-/* כותרת */
+/* Header styling */
 h1 {
-    font-size: 5rem; /* כותרת גדולה */
-    font-family: 'Dancing Script', cursive; /* פונט מסולסל וקליל */
-    color: #1DB954; /* ירוק Spotify */
+    font-size: 5rem; /* Large header text */
+    font-family: 'Dancing Script', cursive; /* Stylish cursive font */
+    color: #1DB954; /* Spotify green */
     margin-top: 20px;
-    font-weight: 500; /* משקל בינוני */
-    text-transform: none; /* שומר על אותיות כמו ב-HTML */
+    font-weight: 500; /* Medium font weight */
+    text-transform: none; /* Preserves text as written in HTML */
     text-shadow: 
-        2px 2px 0px #000, /* שכבת צל ראשונה */
-        4px 4px 0px rgba(0, 0, 0, 0.7), /* שכבת צל שנייה */
-        6px 6px 0px rgba(0, 0, 0, 0.5); /* שכבת צל שלישית */
+        2px 2px 0px #000, /* First shadow layer */
+        4px 4px 0px rgba(0, 0, 0, 0.7), /* Second shadow layer */
+        6px 6px 0px rgba(0, 0, 0, 0.5); /* Third shadow layer */
 }
 
-
-
-/* מכולה */
+/* Container for all content */
 .container {
     max-width: 600px;
     margin: 30px auto;
-    background: #181818; /* אפור כהה */
+    background: #181818; /* Dark gray background */
     padding: 20px;
     border-radius: 10px;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5); /* עומק קל */
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5); /* Light shadow effect */
 }
 
-/* אלמנטים כמו וידאו ותמונות */
+/* Styling for elements like video, canvas, and images */
 video, canvas, img {
     width: 100%;
     height: auto;
     border-radius: 10px;
-    border: 2px solid #333333; /* מסגרת דקה */
+    border: 2px solid #333333; /* Thin border around images and video */
 }
 
-/* שדות קלט */
+/* Styling for input fields */
 input[type="file"], input[type="text"], select {
     margin: 10px 0;
     padding: 10px;
     border: 1px solid #333333;
     border-radius: 5px;
-    background-color: #242424; /* רקע כהה */
+    background-color: #242424; /* Dark background for inputs */
     color: #FFFFFF;
     font-size: 16px;
-    width: calc(100% - 22px);
+    width: calc(100% - 22px); /* Full width with some padding */
     box-sizing: border-box;
 }
 
-/* עיצוב כפתורים */
+/* Styling for buttons */
 button {
-    background-color: #1DB954; /* ירוק Spotify */
+    background-color: #1DB954; /* Spotify green */
     color: #FFFFFF;
     border: none;
     padding: 10px 20px;
-    border-radius: 50px; /* עיגול מלא */
+    border-radius: 50px; /* Fully rounded button */
     cursor: pointer;
     font-size: 16px;
     margin: 10px;
-    transition: background-color 0.3s ease;
+    transition: background-color 0.3s ease; /* Smooth background color change on hover */
 }
 
 button:hover {
-    background-color: #1ED760; /* ירוק בהיר יותר */
+    background-color: #1ED760; /* Lighter green when hovered */
 }
 
-/* עיצוב תוצאה */
+/* Styling for the result section */
 #result {
     margin-top: 20px;
-    color: #FFFFFF; /* טקסט משני */
+    color: #FFFFFF; /* White text for result */
     font-size: 1rem;
 }
 
-/* תצוגה מקדימה */
+/* Image preview styling */
 #preview {
     margin-top: 20px;
-    display: none; /* ברירת מחדל מוסתר */
-    border: 2px solid #1DB954; /* מסגרת ירוקה */
+    display: none; /* Hidden by default */
+    border: 2px solid #1DB954; /* Green border around preview */
     border-radius: 10px;
 }
 
-/* עיצוב הרשימה הנפתחת */
+/* Styling for the country selection dropdown */
 select#country {
     padding: 10px;
     border: 1px solid #333333;
@@ -111,22 +108,22 @@ select#country {
     background-color: #242424;
     color: #FFFFFF;
     font-size: 16px;
-    width: calc(100% - 22px);
+    width: calc(100% - 22px); /* Full width with padding */
 }
 
+/* Focused state for the country dropdown */
 select#country:focus {
     outline: none;
-    border-color: #1DB954; /* מסגרת ירוקה */
-    box-shadow: 0 0 5px rgba(29, 185, 84, 0.5); /* הבלטה */
+    border-color: #1DB954; /* Green border on focus */
+    box-shadow: 0 0 5px rgba(29, 185, 84, 0.5); /* Glow effect when focused */
 }
 
-/* עיצוב הלינק בתוצאה */
+/* Styling for the links in the result section */
 #result a {
-    color: #1DB954; /* צבע הירוק של Spotify */
-    text-decoration: none; /* מסיר את הקו תחתון */
+    color: #1DB954; /* Spotify green */
+    text-decoration: none; /* Removes the underline */
 }
 
 #result a:hover {
-    color: #1ED760; /* ירוק בהיר יותר כשעוברים עם העכבר */
+    color: #1ED760; /* Lighter green on hover */
 }
-

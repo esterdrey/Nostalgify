@@ -1,31 +1,33 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <link rel="icon" href="nostalgifyIcon.png" type="image/png">
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nostalgify</title>
-    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Pacifico&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
-    <script src="human.js"></script>
-    <script src="script.js" defer></script>
+    <link rel="icon" href="nostalgifyIcon.png" type="image/png"> <!-- Icon for the website -->
+    <meta charset="UTF-8"> <!-- Character encoding for the document -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Responsive meta tag for mobile -->
+    <title>Nostalgify</title> <!-- Title of the webpage -->
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Pacifico&display=swap" rel="stylesheet"> <!-- Google Fonts for custom styles -->
+    <link rel="stylesheet" href="style.css"> <!-- Link to external CSS stylesheet -->
+    <script src="human.js"></script> <!-- Script for human.js (used for detecting age from image) -->
+    <script src="script.js" defer></script> <!-- Link to external JavaScript file with deferred execution -->
 </head>
 <body>
     <div class="container">
-        <h1>Nostalgify</h1>
+        <h1>Nostalgify</h1> <!-- Main heading for the website -->
 
-        <!-- העלאת תמונה קיימת -->
-        <input type="file" id="upload" accept="image/*">
-        <select id="country" placeholder="Select your childhood country"></select>
+        <!-- Image upload input field -->
+        <input type="file" id="upload" accept="image/*"> <!-- Allows users to upload an image file -->
 
-        <!-- אלמנט התצוגה המקדימה -->
-        <img id="preview" alt="Image Preview">
+        <!-- Country selection dropdown -->
+        <select id="country" placeholder="Select your childhood country"></select> <!-- Dropdown to select a country -->
 
-        <!-- כפתור שליחה -->
-        <button id="submit">Get Your Playlist</button>
+        <!-- Image preview element, initially hidden -->
+        <img id="preview" alt="Image Preview"> <!-- Displays a preview of the uploaded image -->
 
-        <!-- תוצאה -->
-        <div id="result"></div>
+        <!-- Submit button for generating the playlist -->
+        <button id="submit">Get Your Playlist</button> <!-- Button to trigger playlist generation -->
+
+        <!-- Div element to display the result (playlist) -->
+        <div id="result"></div> <!-- Displays the resulting playlist information -->
     </div>
 </body>
 </html>
