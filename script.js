@@ -40,7 +40,6 @@ document.addEventListener('DOMContentLoaded', async () => {
                 preview.style.display = 'block'; // Display the preview
             };
             reader.readAsDataURL(file); // Read the uploaded file as a data URL
-            imageUploaded = true;
         }
     });
 

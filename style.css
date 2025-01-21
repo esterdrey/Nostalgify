@@ -3,8 +3,6 @@ body {
     margin: 0;
     padding: 0;
     background: url('background.png') center/cover no-repeat; /* Adds the image as background */
-    background-size: cover; /* Ensures the image covers the whole page */
-    background-position: center; /* Centers the image */
     font-family: 'Arial', sans-serif;
     color: #FFFFFF; /* White text */
     position: relative;
