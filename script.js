@@ -4,11 +4,52 @@ document.addEventListener('DOMContentLoaded', async () => {
     const submitButton = document.getElementById('submit');
     const resultDiv = document.getElementById('result');
     const countrySelect = document.getElementById('country');
-    let imageUploaded = false;
 
     // רשימת מדינות
-    const countries = ["United States", "Canada", "United Kingdom", "Israel", "France", "Germany", "Australia"];
-
+    const countries = [
+        "Argentina",
+        "Australia",
+        "Austria",
+        "Belgium",
+        "Brazil",
+        "Canada",
+        "China",
+        "Colombia",
+        "Denmark",
+        "Egypt",
+        "Finland",
+        "France",
+        "Germany",
+        "Greece",
+        "India",
+        "Indonesia",
+        "Ireland",
+        "Israel",
+        "Italy",
+        "Japan",
+        "Malaysia",
+        "Mexico",
+        "Netherlands",
+        "New Zealand",
+        "Norway",
+        "Philippines",
+        "Poland",
+        "Portugal",
+        "Russia",
+        "Saudi Arabia",
+        "Singapore",
+        "South Africa",
+        "South Korea",
+        "Spain",
+        "Sweden",
+        "Switzerland",
+        "Thailand",
+        "Turkey",
+        "United Kingdom",
+        "United States",
+        "Vietnam"
+    ];
+    
     // אתחול קומבובוקס
     function populateCountrySelect() {
         countries.forEach((country) => {
