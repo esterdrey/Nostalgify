@@ -92,7 +92,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
         // יצירת מחרוזת החיפוש ל-Spotify
-        const query = decade === 'kids' ? `${country} kids music` : `${country} ${decade}s hits`;
+        const query = decade === 'kids' ? `${country} kids music` : `${country} ${decade}`;
 
         // חיפוש פלייליסטים ב-Spotify
         const playlists = await searchSpotifyPlaylists(query);
