@@ -19,12 +19,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     }
 
-    // הפיכת הכפתור ללא לחיץ
-    function toggleSubmitButton() {
-        const countrySelected = countrySelect.value.trim() !== "";
-        submitButton.disabled = !(imageUploaded && countrySelected);
-    }
-
     // סינון רשימת המדינות
     countrySelect.addEventListener('input', () => {
         const search = countrySelect.value.toLowerCase();
@@ -44,18 +38,11 @@ document.addEventListener('DOMContentLoaded', async () => {
             };
             reader.readAsDataURL(file);
             imageUploaded = true;
-            toggleSubmitButton();
         }
-    });
-
-    // בחירת מדינה
-    countrySelect.addEventListener('change', () => {
-        toggleSubmitButton();
     });
 
     // אתחול הקומבובוקס
     populateCountrySelect();
-    toggleSubmitButton();
 
     // המשך הקוד המקורי ללא שינוי
     // טעינת Human.js עם הגדרה לטעינת המודלים מ-GitHub
