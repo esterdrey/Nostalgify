@@ -14,8 +14,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // פונקציה לקבלת Access Token מ-Spotify
     async function getSpotifyAccessToken() {
-        const clientId = '9e5becb2c8764dada9b60a8f3b3855c6'; // הכנסי את ה-Client ID שלך
-        const clientSecret = 'b0de34c77ea64efa9cbf661f08b495e6'; // הכנסי את ה-Client Secret שלך
+        const clientId = '9e5becb2c8764dada9b60a8f3b3855c6'; // הכניסי את ה-Client ID שלך
+        const clientSecret = 'b0de34c77ea64efa9cbf661f08b495e6'; // הכניסי את ה-Client Secret שלך
 
         const response = await fetch('https://accounts.spotify.com/api/token', {
             method: 'POST',
@@ -42,7 +42,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
 
         const data = await response.json();
-        return data.playlists.items; // מחזיר את הפלייליסטים
+        return data.playlists.items || []; // מחזיר את הפלייליסטים או מערך ריק אם אין תוצאות
     }
 
     // תצוגה מקדימה של התמונה
@@ -104,7 +104,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
         // הצגת הפלייליסט הראשון בתוצאה
-        if (playlists.length > 0 && playlists[0].external_urls && playlists[0].external_urls.spotify) {
+        if (playlists.length > 0 && playlists[0] && playlists[0].external_urls && playlists[0].external_urls.spotify) {
             const playlist = playlists[0];
             resultDiv.innerHTML = `
                 <p>Your playlist: <a href="${playlist.external_urls.spotify}" target="_blank">${playlist.name}</a></p>
