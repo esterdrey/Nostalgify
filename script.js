@@ -97,7 +97,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         // חיפוש פלייליסטים ב-Spotify
         const playlists = await searchSpotifyPlaylists(query);
 
-        // הצגת הפלייליסט הראשון בתוצאה
+        //  .הצגת הפלייליסט הראשון בתוצאה
         if (playlists.length > 0 && playlists[0]?.external_urls?.spotify) {
             const playlist = playlists[0]; // הפלייליסט הראשון
             resultDiv.innerHTML = `
