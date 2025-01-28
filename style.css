@@ -2,7 +2,7 @@
 body {
     margin: 0;
     padding: 0;
-    background: url('background.png') center/cover no-repeat; /* Adds the image as background */
+    background: url('background.png') center/cover no-repeat fixed; /* Adds the image as background */
     font-family: 'Arial', sans-serif;
     color: #FFFFFF; /* White text */
     position: relative;
@@ -124,4 +124,25 @@ select#country:focus {
 
 #result a:hover {
     color: #1ED760; /* Lighter green on hover */
+}
+
+/* Responsive design for smaller screens */
+@media screen and (max-width: 768px) {
+    .container {
+        max-width: 90%; /* Use a percentage for smaller screens */
+        padding: 10px;
+    }
+
+    h1 {
+        font-size: 3rem; /* Reduce header size on smaller screens */
+    }
+
+    button {
+        font-size: 14px; /* Smaller font for buttons */
+        padding: 8px 15px;
+    }
+
+    #result {
+        font-size: 0.9rem; /* Smaller font size for results */
+    }
 }
