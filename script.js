@@ -96,6 +96,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Function to search for Spotify playlists based on a query string
     async function searchSpotifyPlaylists(query) {
         const accessToken = await getSpotifyAccessToken(); // Get the Spotify Access Token
+        console.log("Access Token:", accessToken); 
 
         const response = await fetch(`https://api.spotify.com/v1/search?q=${encodeURIComponent(query)}&type=playlist`, {
             method: 'GET',
