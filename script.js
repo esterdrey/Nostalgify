@@ -58,6 +58,17 @@ document.addEventListener('DOMContentLoaded', async () => {
         const clientId = '9e5becb2c8764dada9b60a8f3b3855c6'; // Enter your Spotify Client ID here
         const clientSecret = 'b0de34c77ea64efa9cbf661f08b495e6'; // Enter your Spotify Client Secret here
 
+        // Check if there's a valid token stored in sessionStorage
+        const cachedToken = sessionStorage.getItem('spotifyAccessToken');
+        const tokenExpiration = sessionStorage.getItem('spotifyTokenExpiration');
+
+        if (cachedToken && tokenExpiration && Date.now() < parseInt(tokenExpiration)) {
+            console.log('Using cached Spotify token');
+            return cachedToken; // Use the cached token if it's still valid
+        }
+
+        // If no valid cached token, request a new one
+        console.log('Requesting a new Spotify token');
         const response = await fetch('https://accounts.spotify.com/api/token', {
             method: 'POST',
             headers: {
@@ -67,8 +78,19 @@ document.addEventListener('DOMContentLoaded', async () => {
             body: 'grant_type=client_credentials' // Grant type for access token request
         });
 
+        if (!response.ok) {
+            throw new Error('Failed to fetch Spotify Access Token');
+        }
+
         const data = await response.json();
-        return data.access_token; // Return the access token
+        const accessToken = data.access_token; // The new token
+        const expiresIn = data.expires_in * 1000; // Token expiration time in milliseconds
+
+        // Cache the token and its expiration time
+        sessionStorage.setItem('spotifyAccessToken', accessToken);
+        sessionStorage.setItem('spotifyTokenExpiration', Date.now() + expiresIn);
+
+        return accessToken;
     }
 
     // Function to search for Spotify playlists based on a query string
